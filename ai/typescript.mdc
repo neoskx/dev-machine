@@ -1,0 +1,74 @@
+---
+description: TypeScript strict patterns and best practices.
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# TypeScript Standards
+
+These rules apply to all TypeScript code. Project-specific TypeScript rules take priority when they conflict.
+
+---
+
+## Strict Typing
+
+- **No `any`.** Use `unknown` for truly unknown types, then narrow with type guards. If you must use `any`, add a `// eslint-disable` comment with justification.
+- **No type assertions unless provably safe.** Prefer type guards (`if ('key' in obj)`, `instanceof`, custom predicates) over `as` casts.
+- **Enable strict mode.** `strict: true` in `tsconfig.json` is non-negotiable. Never weaken it with `skipLibCheck` hacks.
+- **Use `satisfies` over `as` for validation.** `const config = { ... } satisfies Config` validates without widening.
+
+---
+
+## Type Design
+
+- **Discriminated unions over optional fields.** Model mutually exclusive states explicitly:
+
+```typescript
+// Prefer
+type Result = { status: 'success'; data: User } | { status: 'error'; message: string };
+
+// Avoid
+type Result = { status: string; data?: User; message?: string };
+```
+
+- **Use `as const` for literal types.** `const ROLES = ['admin', 'user'] as const` gives you `readonly ['admin', 'user']` instead of `string[]`.
+- **Exhaustive switches with `never`.** Ensure all union cases are handled:
+
+```typescript
+function assertNever(x: never): never {
+  throw new Error(`Unexpected value: ${x}`);
+}
+```
+
+- **Prefer `interface` for object shapes, `type` for unions/intersections.** Interfaces are extendable and produce better error messages.
+- **Use generics for reusable logic.** Add constraints with `extends` to keep them safe:
+
+```typescript
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] { ... }
+```
+
+---
+
+## Imports & Exports
+
+- **Use `import type` for type-only imports.** Prevents runtime overhead and makes dependencies clear.
+- **Export types separately from values.** `export type { MyType }` keeps the boundary clean.
+- **Prefer named exports over default exports.** Named exports are easier to refactor and auto-import.
+
+---
+
+## Patterns
+
+- **Narrow early, use broadly.** Validate and narrow types at the boundary (API responses, user input), then pass strongly-typed data through the system.
+- **Use utility types.** `Pick`, `Omit`, `Partial`, `Required`, `Record`, `Readonly` — don't reinvent them.
+- **Avoid enums for new code.** Use `as const` objects or string literal unions instead — they're more portable and tree-shakeable.
+- **Type function returns explicitly for public APIs.** Internal/private functions can rely on inference; exported functions should declare return types.
+
+---
+
+## Common Pitfalls
+
+- **Don't use `!` (non-null assertion) without proof.** If you need `!`, you likely need a guard or a redesign.
+- **Don't use `Object`, `Function`, `{}` as types.** They're too broad. Use specific types, `Record<string, unknown>`, or `(...args: unknown[]) => unknown`.
+- **Don't widen callback types.** `(event: MouseEvent) => void` is better than `(event: Event) => void` when you know the context.
+- **Avoid `@ts-ignore`.** Use `@ts-expect-error` with a comment — it fails when the error is fixed, keeping your suppressions honest.

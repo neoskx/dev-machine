@@ -1,0 +1,72 @@
+---
+description: Accessibility (a11y) standards for web development. Ensure all UI is usable by everyone.
+globs: **/*.{jsx,tsx,html,css,scss}
+alwaysApply: false
+---
+
+# Accessibility Standards
+
+All UI must be accessible. These rules apply to ALL web projects as a baseline. Project-specific a11y rules take priority when they conflict.
+
+---
+
+## Semantic HTML
+
+- **Use the right element.** `<button>` for actions, `<a>` for navigation, `<input>` for form fields. Never use `<div>` or `<span>` with click handlers as a substitute.
+- **Use heading hierarchy.** `<h1>` through `<h6>` in order. Don't skip levels. Don't choose headings for visual size — use CSS for that.
+- **Use landmarks.** `<main>`, `<nav>`, `<header>`, `<footer>`, `<aside>`, `<section>` — these help screen readers navigate the page.
+- **Use `<label>` for every form input.** Associate labels with `htmlFor`/`for`. Placeholder text is not a label.
+
+---
+
+## Keyboard Navigation
+
+- **All interactive elements must be keyboard accessible.** If you can click it, you must be able to reach it with Tab and activate it with Enter or Space.
+- **Visible focus indicators.** Never remove `:focus` outlines without providing an alternative. Users who navigate by keyboard need to see where they are.
+- **Logical tab order.** Follow the visual reading order. Don't use positive `tabindex` values — they break natural flow.
+- **Focus management.** When modals open, move focus into the modal. When they close, return focus to the trigger. Trap focus inside modals.
+- **Keyboard shortcuts.** If you add keyboard shortcuts, document them and ensure they don't conflict with screen reader keys.
+
+---
+
+## ARIA
+
+- **First rule of ARIA: don't use ARIA** if a native HTML element or attribute does the job. `<button>` is better than `<div role="button">`.
+- **Required ARIA attributes.** If you must use ARIA roles, include all required attributes (e.g., `role="slider"` needs `aria-valuemin`, `aria-valuemax`, `aria-valuenow`).
+- **`aria-label` / `aria-labelledby`** for elements that lack visible text. Icon buttons, image links, and custom widgets all need accessible names.
+- **`aria-live` for dynamic content.** Announce changes that happen without page reload (notifications, form errors, loading states).
+- **`aria-hidden="true"`** for decorative elements that screen readers should skip (icons next to visible text, decorative images).
+
+---
+
+## Images & Media
+
+- **`alt` text on all images.** Describe the content/function, not the file name. Use `alt=""` for purely decorative images.
+- **Captions for video.** Provide subtitles or transcripts for video and audio content.
+- **Don't rely on color alone.** Use icons, patterns, or text alongside color to convey information (error states, status indicators, charts).
+
+---
+
+## Forms
+
+- **Associate labels with inputs.** Every `<input>`, `<select>`, and `<textarea>` needs a visible `<label>`.
+- **Error messages must be accessible.** Use `aria-describedby` to link error messages to their inputs. Don't only use color to indicate errors.
+- **Group related fields.** Use `<fieldset>` and `<legend>` for radio groups, checkboxes, and related form sections.
+- **Autocomplete attributes.** Use `autocomplete` on common fields (name, email, address) — it helps users and assistive tech.
+
+---
+
+## Color & Contrast
+
+- **Minimum contrast ratio.** 4.5:1 for normal text, 3:1 for large text (WCAG AA). Aim for AAA (7:1 / 4.5:1) when possible.
+- **Test with tools.** Use browser DevTools, axe, or Lighthouse to verify contrast ratios.
+- **Respect user preferences.** Support `prefers-reduced-motion`, `prefers-color-scheme`, and `forced-colors` media queries where applicable.
+
+---
+
+## Testing
+
+- **Automated checks.** Run axe, Lighthouse, or eslint-plugin-jsx-a11y. They catch ~30% of issues.
+- **Keyboard test.** Tab through the entire page. Can you reach and use everything without a mouse?
+- **Screen reader test.** Test with VoiceOver (macOS), NVDA (Windows), or similar at least once per feature.
+- **The 70% rule.** Automated tools only catch a fraction. Manual testing with keyboard and screen reader is essential.

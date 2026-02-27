@@ -1,0 +1,71 @@
+---
+description: Performance best practices for full-stack web development.
+globs: **/*.{js,jsx,ts,tsx,css,scss}
+alwaysApply: false
+---
+
+# Performance Standards
+
+These rules apply to ALL web projects as a baseline. Project-specific performance rules take priority when they conflict.
+
+---
+
+## Core Web Vitals
+
+- **LCP (Largest Contentful Paint) < 2.5s.** Optimize the critical rendering path. Preload hero images and fonts. Avoid layout shifts that delay the largest element.
+- **INP (Interaction to Next Paint) < 200ms.** Keep the main thread free. Break long tasks (>50ms) into smaller chunks. Defer non-critical work with `requestIdleCallback` or `setTimeout`.
+- **CLS (Cumulative Layout Shift) < 0.1.** Always set explicit `width`/`height` on images and videos. Reserve space for dynamic content (ads, embeds, lazy-loaded elements).
+
+---
+
+## Loading Strategy
+
+- **Lazy load below the fold.** Use dynamic imports, `React.lazy`, or `next/dynamic` for components not visible on initial load.
+- **Code split by route.** Each page should only load the JavaScript it needs. Never bundle the entire app into one file.
+- **Preload critical resources.** Use `<link rel="preload">` for fonts, hero images, and critical CSS.
+- **Defer non-critical scripts.** Analytics, chat widgets, and third-party scripts should load after the page is interactive.
+- **Avoid render-blocking resources.** Inline critical CSS. Load non-critical CSS asynchronously.
+
+---
+
+## Images & Assets
+
+- **Use modern formats.** WebP or AVIF over PNG/JPEG. Use `<picture>` with fallbacks for browser support.
+- **Responsive images.** Use `srcset` and `sizes` to serve appropriately-sized images. Don't send a 2000px image to a 400px container.
+- **Compress everything.** Optimize images at build time. Use gzip/brotli for text assets (HTML, CSS, JS).
+- **Lazy load images.** Use `loading="lazy"` for images below the fold. Eager-load above-the-fold images.
+
+---
+
+## Rendering
+
+- **Minimize re-renders.** Use `React.memo`, `useMemo`, and `useCallback` for expensive computations and callback stability. Profile before optimizing.
+- **Virtualize long lists.** Use windowing libraries (react-window, react-virtualized, TanStack Virtual) for lists with 100+ items.
+- **Avoid layout thrashing.** Batch DOM reads and writes. Don't interleave `getBoundingClientRect()` calls with style changes.
+- **Debounce expensive handlers.** Scroll, resize, and input handlers should be debounced or throttled.
+
+---
+
+## Data & Network
+
+- **Cache aggressively.** Use HTTP cache headers (`Cache-Control`, `ETag`). Cache API responses with React Query / SWR stale-while-revalidate patterns.
+- **Minimize request waterfalls.** Fetch data in parallel when possible. Use `Promise.all` or parallel queries. Avoid sequential dependent fetches when data can be restructured.
+- **Paginate everything.** Never fetch unbounded lists. Use cursor-based or offset-based pagination.
+- **Avoid N+1 queries.** On the backend, batch related lookups. Use DataLoader patterns or eager loading.
+
+---
+
+## Bundle Size
+
+- **Monitor bundle size.** Use `webpack-bundle-analyzer`, `next build --analyze`, or similar. Set budgets and alert on regressions.
+- **Tree-shake dependencies.** Import only what you use: `import { debounce } from 'lodash-es'` not `import _ from 'lodash'`.
+- **Audit large dependencies.** Check `bundlephobia.com` before adding a new package. Prefer smaller alternatives for common utilities.
+- **Remove unused dependencies.** Dead dependencies still ship to users if they're imported anywhere.
+
+---
+
+## Measurement
+
+- **Profile before optimizing.** Use React DevTools Profiler, Chrome Performance tab, or Lighthouse. Don't optimize based on intuition.
+- **Measure in production conditions.** Test with throttled CPU (4x slowdown) and slow network (Fast 3G). Developer machines hide real-world perf issues.
+- **Set performance budgets.** Define thresholds for bundle size, LCP, INP, and CLS. Fail CI when budgets are exceeded.

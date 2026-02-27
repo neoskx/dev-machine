@@ -1,0 +1,78 @@
+---
+description: Architecture, system design, and API design principles for full-stack development.
+globs: **/*.{js,jsx,ts,tsx,py,java,cs,go,rb}
+alwaysApply: true
+---
+
+# Architecture & Design Standards
+
+These rules apply to ALL projects. Project-specific architecture rules take priority when they conflict.
+
+---
+
+## Core Principles
+
+- **Separation of concerns.** UI, business logic, and data access belong in distinct layers. A component should not fetch data AND transform it AND render it.
+- **Dependency direction.** Depend on abstractions, not concretions. High-level modules must not import from low-level modules — both should depend on interfaces.
+- **Colocation.** Keep related code together. Tests, styles, types, and utilities that serve a single feature belong in the same directory, not scattered across top-level folders.
+- **Feature-based over layer-based.** Organize by feature (`/users`, `/orders`, `/payments`) rather than by type (`/components`, `/hooks`, `/utils`). Layer-based organization breaks down at scale.
+- **Design for deletion.** Code should be easy to remove. If deleting a feature requires touching 20 files across the codebase, the boundaries are wrong.
+- **Explicit over implicit.** No magic. Dependencies should be injected, not resolved from globals. Configuration should be visible, not hidden in decorators or conventions.
+
+---
+
+## SOLID (Applied Pragmatically)
+
+- **Single Responsibility.** A module/class/function has one reason to change. If you need the word "and" to describe what it does, split it.
+- **Open/Closed.** Extend behavior through composition, plugins, or strategy patterns — not by modifying existing code.
+- **Liskov Substitution.** Subtypes must be substitutable for their base types without breaking behavior. If a subclass overrides a method to throw "not supported", the abstraction is wrong.
+- **Interface Segregation.** Don't force consumers to depend on methods they don't use. Prefer many small interfaces over one large one.
+- **Dependency Inversion.** High-level policy should not depend on low-level detail. Both should depend on abstractions defined by the high-level module.
+
+---
+
+## API Design
+
+- **Consistent resource naming.** Use plural nouns for collections (`/users`, `/orders`), not verbs (`/getUsers`). Use HTTP methods for actions.
+- **Predictable error responses.** Return structured errors with a consistent shape: `{ error: { code, message, details? } }`. Use appropriate HTTP status codes.
+- **Pagination from day one.** Any endpoint that returns a list should support pagination. Unbounded lists are a ticking time bomb.
+- **Version when breaking.** Avoid breaking changes. When unavoidable, version the API (`/v2/users`) and maintain the old version during migration.
+- **Validate at the boundary.** Parse and validate request data at the API handler level, then pass typed/validated objects downstream. Use schemas (Zod, Joi, JSON Schema).
+- **Idempotent mutations.** PUT and DELETE should be idempotent. POST with an idempotency key for critical operations.
+
+---
+
+## State Management
+
+- **Server state vs. client state.** Server state (fetched data) belongs in a cache layer (React Query, SWR, Apollo). Client state (UI toggles, form data) belongs in local state or a lightweight store.
+- **Minimize global state.** Most state should live close to where it's used. Lift state up only when siblings need to share it.
+- **Derive, don't store.** If a value can be computed from other state, compute it. Don't store it separately — that's a synchronization bug waiting to happen.
+
+---
+
+## Async & Side Effects
+
+- **Isolate side effects.** Push I/O (API calls, storage, logging) to the edges. Keep business logic pure and testable.
+- **Handle all async states.** Loading, success, error, and empty states. Every async operation needs all four.
+- **Cancel on unmount.** Abort pending requests when the consumer is destroyed. Avoid updating state on unmounted components.
+- **Retry with backoff.** Transient failures should be retried with exponential backoff and jitter, not immediately in a tight loop.
+
+---
+
+## Observability
+
+- **Structured logging.** Log with context (user ID, request ID, operation) in a parseable format (JSON). Don't log bare strings.
+- **Error tracking.** Integrate an error tracking service (Sentry, Datadog, etc.). Capture unhandled exceptions with stack traces and context.
+- **Health checks.** Every service should expose a health endpoint. Include dependency status (database, external APIs).
+- **Meaningful metrics.** Track what matters: request latency, error rates, queue depth, business KPIs. Don't track everything — track what you'd look at during an incident.
+- **Correlation IDs.** Pass a request ID through the entire call chain so you can trace a single user request across services and logs.
+
+---
+
+## Patterns to Avoid
+
+- **God objects/modules.** If a file has 500+ lines or a component has 10+ props, it's doing too much.
+- **Prop drilling.** More than 2-3 levels deep means you need context, composition, or a state management solution.
+- **Premature abstraction.** Don't abstract until you have 3+ concrete cases. Wrong abstractions are worse than duplication.
+- **Bidirectional dependencies.** Module A imports from B and B imports from A — this creates fragile coupling. Introduce a shared interface or restructure.
+- **Stringly-typed code.** Don't use raw strings where enums, union types, or constants would catch errors at compile time.

@@ -1,0 +1,47 @@
+---
+description: Git workflow, commit discipline, and code review standards.
+globs:
+alwaysApply: true
+---
+
+# Git & Code Review Standards
+
+These rules apply to ALL projects. Project-specific git conventions take priority when they conflict.
+
+---
+
+## Commits
+
+- **Conventional commits.** Use the format `type(scope): description` where type is one of: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`, `ci`, `style`, `build`.
+- **One logical change per commit.** Don't mix a feature, a refactor, and a formatting fix in the same commit. Each commit should be independently revertable.
+- **Imperative mood.** Write "add user validation" not "added user validation" or "adds user validation".
+- **Meaningful descriptions.** The commit message should explain WHY, not WHAT. The diff shows what changed — the message should explain the intent.
+- **Keep commits small.** If a commit touches 20+ files or has 500+ lines changed, it should probably be split.
+- **Never commit generated files** unless the project explicitly requires it (e.g., lockfiles are OK, build output is not).
+
+---
+
+## Branching
+
+- **Follow the project's branching model.** If the project uses trunk-based, GitFlow, or a custom model, follow it exactly.
+- **Short-lived branches.** Feature branches should live for days, not weeks. Long-lived branches accumulate merge conflicts and diverge from main.
+- **Descriptive branch names.** Use `type/ticket-description` format: `feat/CRK-1234-add-user-export`, `fix/CRK-5678-null-avatar`.
+
+---
+
+## Pull Requests
+
+- **Small PRs.** Aim for <400 lines changed. Large PRs get rubber-stamped, small PRs get real reviews.
+- **Self-review first.** Before requesting review, read the entire diff yourself. Catch the obvious issues.
+- **Write a meaningful description.** Include: what changed, why, how to test, and any risks or trade-offs.
+- **One concern per PR.** Don't bundle unrelated changes. If you spotted a bug while working on a feature, fix it in a separate PR.
+- **Address all review comments.** Respond to every comment — either fix it or explain why you disagree. Don't leave comments hanging.
+
+---
+
+## Safety
+
+- **Never force-push to shared branches** (`main`, `master`, `develop`) without explicit team agreement.
+- **Never commit secrets.** API keys, tokens, passwords, `.env` files with real values — none of these belong in git history.
+- **Use `.gitignore` proactively.** Add patterns for IDE files, OS files, build output, and environment files before they get committed.
+- **Review before merging.** No self-merging without review unless the project explicitly allows it for trivial changes.

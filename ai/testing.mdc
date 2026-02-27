@@ -1,0 +1,69 @@
+---
+description: Enforce TDD workflow and testing best practices across all projects.
+globs: **/*.{js,jsx,ts,tsx,py,java,cs,go,rb,cpp,c,swift,kt}
+alwaysApply: true
+---
+
+# Testing Standards
+
+These rules govern how tests are written and how the TDD workflow is followed. They apply to ALL projects as a baseline. Project-specific testing rules (e.g., test utilities, mocking conventions) take priority when they conflict.
+
+---
+
+## TDD Workflow (Mandatory)
+
+Always follow Test-Driven Development for every code change:
+
+1. **Red** — Write a failing test first that describes the expected behavior.
+2. **Green** — Write the minimum production code to make the test pass.
+3. **Refactor** — Clean up the code while keeping tests green.
+
+### Enforcement
+
+- Show the user the failing test before writing the implementation.
+- Run the test to confirm it fails for the right reason before proceeding.
+- If the user explicitly asks to skip TDD for a specific task, respect that.
+
+---
+
+## Mocking
+
+- **Mock at the network level, not the component level.** Prefer mocking HTTP/API calls (e.g., MSW, `nock`, `fetch` mocks) over mocking React components or modules.
+- If you must mock a component or module, acknowledge the limitation to the user.
+- **Don't over-mock.** If everything is mocked, you're testing your mocks, not your code.
+
+---
+
+## Test Quality
+
+- **Don't write tests just for coverage.** Every test should verify meaningful behavior that could actually break.
+- **No unnecessary tests for thin wrappers.** If the only way to test a component is to mock its sole dependency, the test is tautological. Test the logic at a higher level instead.
+- **One concept per test.** Each test should assert one logical idea.
+- **Test boundary conditions.** Zero, one, max, null, empty, overflow — bugs hide at the edges.
+- **Test behavior, not implementation.** Assert on outcomes visible to the user or consumer, not on internal state or method calls.
+
+---
+
+## Test Structure
+
+- **Arrange-Act-Assert.** Every test has three clear phases. Keep them visually distinct.
+- **Descriptive test names.** A test name should read as a specification: `should return empty array when no users match filter`, not `test1` or `works`.
+- **No logic in tests.** No conditionals, loops, or try-catch in test bodies. If you need branching, you need separate tests.
+- **Independent tests.** Tests must not depend on execution order or shared mutable state.
+
+---
+
+## Test Strategy (The Pyramid)
+
+- **Many unit tests.** Fast, isolated, cheap. Cover business logic, utilities, hooks, and pure functions.
+- **Fewer integration tests.** Test modules working together — components with their hooks, API handlers with middleware. These catch wiring bugs that unit tests miss.
+- **Minimal E2E tests.** Reserve for critical user journeys (login, checkout, onboarding). They're slow and brittle — don't use them to test logic.
+- **Choose the right level.** If a bug would be caught by a unit test, don't write an integration test for it. Test at the lowest level that gives you confidence.
+
+---
+
+## Conventions
+
+- **Follow project test conventions first.** Check existing test files in the same directory before writing new ones. Match the patterns exactly.
+- **Use project test utilities.** If the project provides custom `render`, `screen`, or test helpers, use those instead of raw library imports.
+- **Test file colocation.** Place test files next to the code they test (e.g., `MyComponent.test.tsx` beside `MyComponent.tsx`) unless the project uses a different convention.

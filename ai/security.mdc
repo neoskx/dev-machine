@@ -1,0 +1,80 @@
+---
+description: Security best practices for full-stack development. Apply to all code generation, review, and refactoring.
+globs: **/*.{js,jsx,ts,tsx,py,java,cs,go,rb,sql,sh,yml,yaml,json,toml}
+alwaysApply: true
+---
+
+# Security Standards
+
+These rules apply to ALL projects. Project-specific security rules take priority when they conflict.
+
+---
+
+## Secrets & Credentials
+
+- **Never commit secrets.** API keys, tokens, passwords, and private keys must never appear in source code, config files, or commit history.
+- **Use environment variables or secret managers.** Reference secrets via `process.env`, `.env` files (gitignored), or a vault service — never inline.
+- **Flag suspicious patterns.** If you see a hardcoded secret, credential, or connection string in code, warn the user immediately.
+- **Rotate on exposure.** If a secret is accidentally committed, treat it as compromised. Advise rotating it, not just removing from history.
+
+---
+
+## Input Validation
+
+- **Validate all external input.** User input, query params, request bodies, headers, file uploads — trust nothing from outside the system boundary.
+- **Validate on the server, not just the client.** Client-side validation is UX; server-side validation is security.
+- **Sanitize before rendering.** Escape or sanitize any user-provided content before inserting into HTML, SQL, shell commands, or logs.
+- **Use allowlists over denylists.** Define what IS allowed, not what isn't. Denylists always have gaps.
+
+---
+
+## Common Vulnerabilities
+
+- **XSS (Cross-Site Scripting):** Never use `dangerouslySetInnerHTML`, `innerHTML`, or `eval()` with untrusted data. Use framework-provided escaping (React auto-escapes JSX by default — don't bypass it).
+- **SQL Injection:** Always use parameterized queries or an ORM. Never concatenate user input into SQL strings.
+- **CSRF (Cross-Site Request Forgery):** Use CSRF tokens for state-changing requests. Validate `Origin`/`Referer` headers on the server.
+- **Path Traversal:** Never construct file paths from user input without validation. Reject `../` and absolute paths.
+- **Command Injection:** Never pass user input to `exec()`, `spawn()`, or shell commands without sanitization. Use argument arrays over string interpolation.
+
+---
+
+## Authentication & Authorization
+
+- **Authenticate at the boundary.** Verify identity early (middleware/guards), not deep in business logic.
+- **Authorize every action.** Check permissions on the server for every operation. Never rely on hiding UI elements as access control.
+- **Use the principle of least privilege.** Grant the minimum permissions needed. Default to deny.
+- **Session management.** Use secure, HttpOnly, SameSite cookies. Set reasonable expiration. Invalidate sessions on logout.
+
+---
+
+## Dependencies
+
+- **Audit regularly.** Run `npm audit`, `pip audit`, or equivalent. Don't ignore known vulnerabilities.
+- **Pin versions.** Use lockfiles (`package-lock.json`, `yarn.lock`, `poetry.lock`). Review dependency updates before merging.
+- **Minimize attack surface.** Don't install packages you don't need. Fewer dependencies = fewer vectors.
+
+---
+
+## HTTP Security
+
+- **CORS.** Configure allowed origins explicitly. Never use `Access-Control-Allow-Origin: *` on authenticated endpoints. Allowlist specific domains.
+- **CSP (Content Security Policy).** Set `Content-Security-Policy` headers to restrict script sources, inline scripts, and eval. This is the strongest defense against XSS beyond framework escaping.
+- **Rate limiting.** Apply rate limits to all public endpoints — especially authentication, password reset, and API routes. Use 429 status codes.
+- **Security headers.** Set `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Strict-Transport-Security`, and `Referrer-Policy`.
+
+---
+
+## Server-Side Threats
+
+- **SSRF (Server-Side Request Forgery).** Never fetch URLs from user input without validation. Block requests to internal IPs (`127.0.0.1`, `10.*`, `169.254.*`, `metadata` endpoints). Allowlist target domains when possible.
+- **Denial of Service.** Limit request body sizes. Set timeouts on external calls. Validate file upload sizes before processing.
+- **Prototype pollution.** In Node.js, avoid merging untrusted objects into existing objects with `Object.assign` or spread without sanitization.
+
+---
+
+## Data & Privacy
+
+- **Don't log sensitive data.** PII, tokens, passwords, and financial data must never appear in logs, error messages, or analytics.
+- **Encrypt in transit.** Use HTTPS/TLS for all network communication.
+- **Encrypt at rest.** Sensitive stored data (passwords, tokens, PII) should be encrypted or hashed (bcrypt/argon2 for passwords).
+- **Minimize data collection.** Only collect and store what you actually need.

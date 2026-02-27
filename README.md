@@ -1,140 +1,79 @@
-# Mackbook Setup for an Engineer
-> Mackbook setup for front-end engineer, backend engineer, and full-stack engineer
+# dev-machine
 
-## System Preferences
-Set system preferences by the terminal
+Set up a full development environment on a new Mac in minutes.
 
-### Show library folder
-`chflags nohidden ~/Library` 
-### Show hidden files
-`defaults write com.apple.finder AppleShowAllFiles YES`
-### Show path bar
-`defaults write com.apple.finder ShowPathbar -bool true`
-### Show status bar
-`defaults write com.apple.finder ShowStatusBar -bool true`
-### Show items as column
-`defaults write com.apple.finder FXPreferredViewStyle clmv`
+## Quick Start
 
-After running those commands, run `killall Finder`
-
-## Terminal Applications
-
-### [Howebrew](https://brew.sh/)
-The Missing Package Manager for macOS (or Linux)
-
-**Install**
-
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-
-### [mkcert](https://github.com/FiloSottile/mkcert)
-A simple zero-config tool to make locally trusted development certificates with any names you'd like.
-
-**Install**
-
-```
-brew install mkcert
-brew install nss # if you use Firefox
+```bash
+git clone https://github.com/neoskx/dev-machine.git ~/.dev-machine
+cd ~/.dev-machine
+./setup.sh
 ```
 
-### [nerd-fonts](https://github.com/ryanoasis/nerd-fonts)
+## What It Does
 
-**Install**
+| Step | What | Script |
+|------|-------|--------|
+| 1 | Install Homebrew + all apps/tools | `brew/Brewfile` |
+| 2 | Configure macOS Finder preferences | `macos/defaults.sh` |
+| 3 | Set up oh-my-zsh, plugins, starship | `terminal/setup.sh` |
+| 4 | Install nvm, pyenv | `languages/setup.sh` |
+| 5 | Link AI agent rules to `~/.ai-rules` | `ai/install.sh` |
 
-`brew install font-hack-nerd-font`
+## Structure
 
-### [oh my zsh](https://ohmyz.sh/)
-Unleash your terminal like never before
-
-**Install**
-
-`sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
-
-#### Theme
-Recommend to use [Starship]()
-
-**Install**
-
-`brew install starship`
-
-Add to `.zshrc`: 
-
-`echo 'eval "$(starship init zsh)"' >> ~/.zshrc`
-
-Use [Nerd Font Symbols Preset](https://starship.rs/presets/nerd-font):
-
-`starship preset nerd-font-symbols -o ~/.config/starship.toml`
-
-> Select **Hack Nerd Font**
-> 
-> iTerm
-> 
-> <img width="1011" alt="image" src="https://github.com/neoskx/macbook-setup/assets/870358/659d7958-aff2-486c-894c-ad8f1304398d">
-
-> Terminal
-> 
-> <img width="779" alt="image" src="https://github.com/neoskx/macbook-setup/assets/870358/ff131ef2-6015-44c4-8557-bb86ebdd0b04">
-
-
-#### Plugins
-Oh My Zsh comes bundled with [plugins](https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins)
-
-Enable following plugins
-* **git**
-* **[zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)**
-  `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting`
-
-* **[zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)**
-  `git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions`
-
-* **[zsh-completions](https://github.com/zsh-users/zsh-completions)**
-  `git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions`
-* **[colored-man-pages](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/colored-man-pages)**
- 
 ```
-plugins=(
-  git
-  colored-man-pages
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-  zsh-completions
-)
+dev-machine/
+├── setup.sh               # One-command bootstrap
+├── macos/
+│   └── defaults.sh        # macOS system preferences
+├── brew/
+│   └── Brewfile           # Homebrew packages, casks, fonts
+├── terminal/
+│   └── setup.sh           # oh-my-zsh, plugins, starship
+├── languages/
+│   └── setup.sh           # nvm, pyenv
+├── dotfiles/              # Shell configs (add .zshrc, .gitconfig, etc.)
+└── ai/
+    ├── rules.md           # Personal AI agent rules
+    ├── skills/            # Reusable AI workflows
+    └── install.sh         # Symlinks ai/ to ~/.ai-rules
 ```
 
-## Applications
-### [iTerm2](https://iterm2.com/)
-iTerm2 is a replacement for Terminal and the successor to iTerm. 
-### [Visual Studio Code](https://code.visualstudio.com/)
-Code editing. Redefined. Free. Built on open source. Runs everywhere.
-### [Docker](https://www.docker.com/products/docker-desktop/)
-Accelerate how you build, share, and run applications
+## AI Agent Rules
 
-## Development Environment 
-### NodeJS
-#### [nvm](https://github.com/nvm-sh/nvm)
-Node Version Manager
+Personal rules in `ai/rules.md` are loaded by AI agents (Cursor, Claude, etc.) via the `~/.ai-rules` symlink.
 
-**Install**
+**Cursor setup**: Settings > General > Rules for AI:
 
-`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash`
-
-#### [yarn](https://yarnpkg.com)
-Yarn is a package manager that doubles down as a project manager.
-
-### Python
-#### [pyenv](https://github.com/pyenv/pyenv)
-Simple Python version management
-
-**Install**
-
-`brew install pyenv`
-
-```shell
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
-echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+```
+Always read and follow my personal rules from ~/.ai-rules/rules.md before starting any task.
 ```
 
-### ASP.NET
-#### [.NET SDK](https://dotnet.microsoft.com/download)
-`brew install --cask dotnet-sdk`
+**Claude Code setup**:
 
+```bash
+echo "Always read and follow my personal rules from ~/.ai-rules/rules.md" > ~/.claude/CLAUDE.md
+```
+
+These rules work alongside project-specific rules (`.cursor/rules/`, `.ai/rules/`, `CLAUDE.md` in each repo).
+
+## Apps Installed (via Brewfile)
+
+**CLI**: mkcert, nss, starship, pyenv
+
+**Apps**: iTerm2, VS Code, Cursor, Docker
+
+**Fonts**: Hack Nerd Font
+
+Edit `brew/Brewfile` to customize.
+
+## Run Individual Steps
+
+```bash
+./macos/defaults.sh        # Only macOS preferences
+./terminal/setup.sh        # Only terminal setup
+./languages/setup.sh       # Only language runtimes
+./ai/install.sh            # Only AI rules symlink
+brew bundle --file=brew/Brewfile  # Only Homebrew packages
+```

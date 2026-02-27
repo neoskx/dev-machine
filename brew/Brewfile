@@ -1,0 +1,18 @@
+# Taps
+tap "homebrew/cask-fonts"
+
+# CLI Tools
+brew "mkcert"
+brew "nss"
+brew "starship"
+brew "pyenv"
+
+# Fonts
+cask "font-hack-nerd-font"
+
+# Applications
+cask "iterm2"
+cask "visual-studio-code"
+cask "docker"
+cask "cursor"
+cask "dotnet-sdk"

@@ -42,6 +42,6 @@ These rules apply to ALL projects. Project-specific git conventions take priorit
 ## Safety
 
 - **Never force-push to shared branches** (`main`, `master`, `develop`) without explicit team agreement.
-- **Never commit secrets.** API keys, tokens, passwords, `.env` files with real values — none of these belong in git history.
+- **Never commit secrets.** See `security.mdc` for full secrets handling rules.
 - **Use `.gitignore` proactively.** Add patterns for IDE files, OS files, build output, and environment files before they get committed.
 - **Review before merging.** No self-merging without review unless the project explicitly allows it for trivial changes.

@@ -1,180 +1,52 @@
 ---
-description: Planning workflow for complex tasks — design, refactoring, and multi-step implementations.
+description: Evaluate whether the current task needs a plan. Lightweight trigger — always loaded.
 globs:
 alwaysApply: true
 ---
 
-# Planning Standards
+# Planning — When and How
 
-For complex tasks, write and maintain a plan before writing code. This ensures structured thinking, traceability, and continuity across sessions.
+## Evaluate Every Task
 
----
+At the start of every task, decide whether it needs a plan:
 
-## When to Plan
-
-- **Plan**: Features with 3+ steps, system refactors, multi-file changes, architecture decisions, migrations.
-- **Skip**: One-liner fixes, simple bug fixes, single-file edits, renaming, formatting.
+- **Create a plan**: Features with 3+ steps, system refactors, multi-file changes, architecture decisions, migrations.
+- **Skip planning**: Bug fixes, hotfixes, one-liner changes, single-file edits, renaming, formatting, small improvements.
 - If unsure, ask the user.
 
----
+## Check for Existing Plans
 
-## Plans Directory
+Before creating a new plan, check if one already exists:
 
-Resolve the plans directory using this fallback chain:
+1. Run `echo $AI_AGENT_PLANS_FOLDER` to resolve the plans directory. If empty, use `~/.ai-agent-plans/`.
+2. Look for an existing plan in `{plans_dir}/{project-name}/` that matches the current work.
+3. If a plan exists, **read both `plan.md` and `log.md`** to restore context. Update them — don't recreate.
+4. If no plan exists and the task warrants one, read `~/.ai-rules/planning-templates.mdc` for the full templates and directory structure, then create the plan.
 
-1. **`$AI_AGENT_PLANS_FOLDER`** — check this environment variable first.
-2. **`~/.ai-agent-plans/`** — fallback when the env var is not set.
+## Retrospective — Improve the Rules
 
-At the start of a planning task, run `echo $AI_AGENT_PLANS_FOLDER` to check for the env var. If empty, use `~/.ai-agent-plans/`.
+Before closing out any planned task, reflect on the rules themselves:
 
----
+1. **Were any rules missing** that would have helped during this task?
+2. **Were any rules wrong or too strict** for this context?
+3. **Did a new pattern or skill emerge** that should be captured?
+4. **Were any rules redundant or confusing** — overlapping or contradicting each other?
 
-## Directory Structure
+If you have suggestions, share them with the user as a brief summary. Only update `~/.ai-rules/` files when the user approves. When rules are changed:
 
-Each initiative gets its own directory with two files:
+1. Update the rule file(s) themselves.
+2. Update `~/.ai-rules/CHANGELOG.md` with what changed and why.
+3. Update `~/.ai-rules/README.md` to reflect the latest file structure and descriptions.
+4. Update the file table in `~/.ai-rules/rules.md` if files were added or removed.
 
-```
-{plans_dir}/{project-name}/
-└── {initiative-name}/
-    ├── plan.md        # What we intend to do
-    └── log.md         # What actually happened during execution
-```
+Log the reflection in `log.md` under a `### Rules Feedback` heading.
 
-Examples:
-```
-~/.ai-agent-plans/creator-hub/
-├── feat-user-export/
-│   ├── plan.md
-│   └── log.md
-├── refactor-auth-flow/
-│   ├── plan.md
-│   └── log.md
-└── migrate-to-foundation-ui/
-    ├── plan.md
-    └── log.md
-```
+Before suggesting changes, read `~/.ai-rules/CHANGELOG.md` to avoid re-suggesting previously reverted rules.
 
-Use lowercase kebab-case for directory names. Prefix with type: `feat-`, `refactor-`, `fix-`, `migrate-`, `perf-`.
+This creates a continuous improvement loop: work → reflect → improve rules → work better.
 
----
+## Key Rules
 
-## plan.md Format
-
-```markdown
-# {Title}
-
-**Status**: draft | in-progress | completed | abandoned
-**Created**: {date}
-**Updated**: {date}
-**Ticket**: {link if available}
-
-## Context
-
-Why this work is needed. Link to tickets, PRs, or discussions if available.
-
-## Scope
-
-**In scope:**
-- ...
-
-**Out of scope:**
-- ...
-
-## Design
-
-Key decisions, approach, and trade-offs. Keep it concise — this is a working document, not an RFC.
-
-## Test Plan
-
-### Acceptance Criteria
-- [ ] Criterion 1
-- [ ] Criterion 2
-
-### Test Cases
-
-**Happy path:**
-- [ ] {test description}
-
-**Edge cases:**
-- [ ] {test description}
-
-**Error cases:**
-- [ ] {test description}
-
-### Mocking Strategy
-What needs to be mocked (APIs, services, modules) and at what level.
-
-## Tasks
-
-- [ ] Step 1
-- [ ] Step 2
-- [ ] Step 3
-
-## Risks
-
-- {Risk}: {mitigation}
-```
-
-### Guidelines
-
-- The **Test Plan** feeds directly into TDD. Each test case becomes a Red-Green cycle.
-- **Acceptance Criteria** define "done". The task is complete when all criteria are met and all tests pass.
-- **Scope** prevents creep. If something is out of scope, it stays out — log it for a follow-up task.
-- **Design** should explain trade-offs: what alternatives were considered and why this approach was chosen.
-- **Risks** should include unknowns, dependencies on other teams, and anything that could block or derail the work.
-
----
-
-## log.md Format
-
-```markdown
-# {Title} — Execution Log
-
-## {date}
-
-### Decisions
-- {Decision made and why}
-
-### Discoveries
-- {Unexpected behavior, edge cases found}
-
-### Issues
-- {Errors encountered and resolution}
-
-### Deviations
-- {Changes from original plan and why}
-```
-
-### What goes in the log
-
-- Key decisions made during implementation (and why)
-- Discoveries — unexpected behavior, edge cases found
-- Errors encountered and how they were resolved
-- Deviations from the original plan
-- Context that helps someone (or a future AI session) pick up the work
-
-### What does NOT go in the log
-
-- Verbose terminal output (that's what the terminal is for)
-- Every file touched (that's what git is for)
-- Routine task completion updates (check off tasks in `plan.md` instead)
-
----
-
-## Workflow
-
-1. **Create the plan before writing code.** Share with the user for approval on complex tasks.
-2. **Write the test plan first.** This drives the TDD workflow — each test case becomes a failing test.
-3. **Update plan.md as you go.** Check off completed tasks, update status.
-4. **Write to log.md during execution.** Capture decisions, discoveries, and deviations as they happen.
-5. **Read both files at the start of each session.** If resuming work, read existing plan and log to restore context.
-6. **Mark completed when done.** Set status to `completed`, ensure all acceptance criteria and tasks are checked off.
-
----
-
-## Rules
-
-- Plans are working documents, not permanent artifacts. Don't over-polish them.
 - One plan per initiative. Don't create a plan for each sub-task.
-- If the plan changes significantly, update it — don't create a new one. Log the change in `log.md`.
-- Plans should be readable by the user and by future AI sessions picking up the work.
+- Plans are working documents. Update status, check off tasks, and log decisions as you go.
+- Share the plan with the user for approval before starting complex implementations.

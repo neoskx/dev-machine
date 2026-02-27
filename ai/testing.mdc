@@ -10,19 +10,34 @@ These rules govern how tests are written and how the TDD workflow is followed. T
 
 ---
 
-## TDD Workflow (Mandatory)
+## TDD Workflow (Default for Logic Changes)
 
-Always follow Test-Driven Development for every code change:
+Follow Test-Driven Development for code that contains logic:
 
 1. **Red** — Write a failing test first that describes the expected behavior.
 2. **Green** — Write the minimum production code to make the test pass.
 3. **Refactor** — Clean up the code while keeping tests green.
 
+### When to use TDD
+
+- Business logic, utilities, hooks, data transformations
+- API handlers, middleware, validation
+- Components with conditional rendering or user interaction
+- Bug fixes (write the failing test that reproduces the bug first)
+
+### When to skip TDD
+
+- Styling, markup, CSS, Tailwind class changes
+- Configuration files, environment variables, CI pipelines
+- Translations, copy, documentation
+- Prototyping or exploration (write tests after the approach is validated)
+- Refactoring code that already has passing tests (update tests after)
+
 ### Enforcement
 
-- Show the user the failing test before writing the implementation.
+- For TDD tasks: show the user the failing test before writing the implementation.
 - Run the test to confirm it fails for the right reason before proceeding.
-- If the user explicitly asks to skip TDD for a specific task, respect that.
+- If the user explicitly asks to skip or use TDD for a specific task, respect that.
 
 ---
 

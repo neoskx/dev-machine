@@ -37,7 +37,7 @@ These rules apply to ALL projects. Project-specific architecture rules take prio
 - **Predictable error responses.** Return structured errors with a consistent shape: `{ error: { code, message, details? } }`. Use appropriate HTTP status codes.
 - **Pagination from day one.** Any endpoint that returns a list should support pagination. Unbounded lists are a ticking time bomb.
 - **Version when breaking.** Avoid breaking changes. When unavoidable, version the API (`/v2/users`) and maintain the old version during migration.
-- **Validate at the boundary.** Parse and validate request data at the API handler level, then pass typed/validated objects downstream. Use schemas (Zod, Joi, JSON Schema).
+- **Parse at the boundary, pass typed data downstream.** Validate and transform request data at the API handler level using schemas (Zod, Joi, JSON Schema), then pass strongly-typed objects to business logic. See `security.mdc` for input validation rules.
 - **Idempotent mutations.** PUT and DELETE should be idempotent. POST with an idempotency key for critical operations.
 
 ---

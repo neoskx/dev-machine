@@ -1,0 +1,164 @@
+---
+description: Enforce Clean Code best practices (Robert C. Martin) across all code generation, review, and refactoring tasks.
+globs: **/*.{js,jsx,ts,tsx,py,java,cs,go,rb,cpp,c,swift,kt}
+alwaysApply: true
+---
+
+# Clean Code Best Practices
+
+Whenever you write, review, refactor, or suggest code, strictly follow the principles from _Clean Code_ by Robert C. Martin. These are non-negotiable quality standards.
+
+---
+
+## Naming
+
+- Use **intention-revealing names**. A name must answer: why it exists, what it does, and how it is used. If a name requires a comment, rename it.
+- Avoid disinformation. Never use misleading abbreviations or names that suggest a different type/structure (e.g., avoid `accountList` if it's not a `List`).
+- Make **meaningful distinctions**. Don't use noise words (`data`, `info`, `the`, `obj`, `a`) to differentiate names — they add no meaning.
+- Use **pronounceable names**. Prefer `generationTimestamp` over `genymdhms`.
+- Use **searchable names**. Avoid single-letter variables (except loop counters `i`, `j`) and magic numbers — use named constants.
+- **No encodings.** Drop Hungarian notation, member prefixes (`m_`, `_`, `I`). Modern tooling makes them obsolete.
+- **Class names** → nouns or noun phrases: `Customer`, `OrderProcessor`, `HtmlParser`.
+- **Method/function names** → verbs or verb phrases: `sendEmail`, `calculateTotal`, `isExpired`.
+- **One word per concept.** Don't mix `fetch`, `retrieve`, `get`, and `load` for the same operation across the codebase. Pick one and be consistent.
+- **Boolean names** should read as questions: `isEmpty`, `hasPermission`, `isValid`.
+
+---
+
+## Functions
+
+- **Functions must be small.** Aim for under 20 lines. If a function scrolls off the screen, it's too long.
+- **Do ONE thing.** A function should have a single responsibility. If you can extract another named function from it, it's doing too much.
+- **One level of abstraction per function.** Don't mix high-level orchestration with low-level implementation details in the same function.
+- **Keep arguments minimal.** Prefer 0 arguments (niladic), then 1 (monadic), then 2 (dyadic). Avoid 3+ — use a parameter object or builder instead.
+- **No flag arguments.** A boolean parameter is a sign the function does two things. Split it into two functions.
+- **No output arguments.** Functions should return values, not mutate parameters passed into them.
+- **No side effects.** A function must do exactly what its name says — nothing hidden, no global state mutation, no unexpected I/O.
+- **Prefer exceptions over error codes.** Error codes pollute the calling code with nested conditionals. Let exceptions bubble with context.
+- **DRY — Don't Repeat Yourself.** If you see duplicated logic, extract it. Duplication is the root of all software rot.
+- **Command-Query Separation.** A function either _does something_ (command) or _answers something_ (query). Never both.
+
+---
+
+## Comments
+
+- **The best comment is no comment** — rewrite the code to be self-explanatory instead.
+- **Acceptable comments:**
+  - Legal/license headers
+  - Explanation of _why_ a non-obvious decision was made
+  - Warnings about consequences (e.g., "This test takes several minutes")
+  - TODO/FIXME notes (with a ticket reference)
+  - Clarification of regex or complex algorithm intent
+- **Banned comments:**
+  - Redundant comments that restate what the code already says
+  - Changelog/journal comments (use Git)
+  - Commented-out dead code (delete it — Git has history)
+  - Noise comments: `// default constructor`, `// end of function`
+  - Misleading comments that are out of sync with the code
+
+---
+
+## Formatting
+
+- **Vertical openness:** Separate unrelated concepts with blank lines. Group related lines together with no blank lines between them.
+- **Vertical density:** Lines that are tightly related should appear close together without visual interruption.
+- **File size:** Keep files under 300–500 lines. Large files are a signal of too many responsibilities.
+- **Variable declaration:** Declare variables close to their first use, not at the top of the scope.
+- **Instance variables:** Declare at the top of the class — everyone knows to look there.
+- **Caller above callee:** Place the calling function above the function it calls, so the code reads top-to-bottom like a newspaper.
+- **Line length:** Keep lines under 120 characters. Never sacrifice readability for brevity.
+- **Indentation:** Respect indentation rigorously. Never collapse control structures onto a single line to save space.
+- **Team rules override personal style.** If a `.editorconfig`, `.eslintrc`, or formatter config exists, follow it without deviation.
+
+---
+
+## Objects and Data Structures
+
+- **Hide internal data.** Objects expose _behavior_, not raw fields. Don't leak implementation details through getters/setters unless necessary.
+- **Law of Demeter:** A method should only interact with: itself, its own fields, objects it directly creates, and arguments passed to it.
+  - ✅ `order.calculateTotal()`
+  - ❌ `order.getCustomer().getAddress().getCity()`
+- **Avoid Train Wrecks.** Long method chains that reach into foreign objects violate the Law of Demeter and create brittle coupling.
+- **Data Transfer Objects (DTOs):** Pure data containers with no behavior are acceptable at system boundaries (API responses, DB rows).
+- **Avoid hybrid structures.** A class should be either an object (hides data, exposes behavior) or a data structure (exposes data, has no behavior). Don't mix.
+
+---
+
+## Error Handling
+
+- **Use exceptions, not return codes.** Return codes pollute callers with check logic and are easy to ignore.
+- **Write try-catch-finally first** when writing code that can fail. Define the scope of failure upfront.
+- **Prefer unchecked exceptions.** Checked exceptions leak implementation details up the call stack and violate the Open/Closed Principle.
+- **Provide rich context in exceptions.** Include the operation that failed and enough detail to diagnose the problem.
+- **Never return `null`.** Returning null forces every caller to check for it. Return an empty collection, a special-case object, or throw.
+- **Never pass `null`.** Passing null into a function is asking for a null pointer exception. Validate at the boundary instead.
+- **Don't swallow exceptions silently.** An empty catch block is always a bug waiting to surface in production.
+
+---
+
+## Boundaries (Third-Party Code)
+
+- **Wrap third-party APIs.** Never let a vendor library roam free in your codebase. Wrap it in your own interface so you control the surface area.
+- **Write learning tests.** When adopting a new library, write focused tests to verify your understanding of its behavior. These tests also catch breaking changes during upgrades.
+- **Define the boundary interface you _wish_ you had**, then build an adapter. This decouples your code from the third-party API's quirks.
+
+---
+
+## Unit Tests (TDD)
+
+- **The Three Laws of TDD:**
+  1. Write no production code until you have a failing test.
+  2. Write only enough test code to make the test fail (compilation failure counts).
+  3. Write only enough production code to make the failing test pass.
+- **Tests must be clean.** Test code is a first-class citizen. Dirty tests are worse than no tests — they rot over time and become a liability.
+- **One concept per test.** Each test function should assert one logical idea, not chain multiple unrelated assertions.
+- **Follow F.I.R.S.T.:**
+  - **Fast** — Tests should run in milliseconds, not seconds.
+  - **Independent** — Tests must not depend on each other or on execution order.
+  - **Repeatable** — Tests must produce identical results in every environment.
+  - **Self-Validating** — Tests pass or fail automatically — no manual inspection of output.
+  - **Timely** — Write tests _just before_ the production code they validate.
+- **Test the boundary conditions.** Bugs love to hide at the edges: zero, one, max, null, empty, overflow.
+
+---
+
+## Classes
+
+- **Classes should be small** — measured by _responsibilities_, not line count.
+- **Single Responsibility Principle (SRP):** A class should have exactly one reason to change. If you can describe two separate jobs it does, split it.
+- **High cohesion:** A class's methods should use most of its instance variables. Low cohesion means the class is trying to do too much.
+- **Open/Closed Principle:** Classes should be open for extension but closed for modification. Favor abstractions, interfaces, and polymorphism over `if/else` or `switch` chains that require modifying existing code.
+- **Prefer many small, focused classes** over few large God classes.
+- **Encapsulate change.** Isolate the parts of the system most likely to change behind interfaces. Protect stable code from volatile code.
+- **Composition over inheritance.** Favor composing behaviors through object references rather than deep inheritance hierarchies.
+
+---
+
+## Systems
+
+- **Separate construction from use.** The code that builds the object graph (startup/wiring) should be completely separate from the code that uses it (business logic).
+- **Use Dependency Injection.** Pass dependencies into objects rather than letting objects create or look up their own dependencies. This makes code testable and decoupled.
+- **Delay design decisions.** Don't over-engineer upfront. Use the simplest design that works, and refactor as requirements clarify.
+- **Systems need stories too.** A system should read clearly at every level of abstraction — from `main()` down to the lowest utility.
+
+---
+
+## Emergence (Simple Design Rules, in priority order)
+
+1. **Runs all the tests.** A system must be verifiable. Untestable systems can't be verified as correct.
+2. **No duplication.** Every piece of knowledge must have a single, unambiguous representation in the system.
+3. **Expresses the intent of the programmer.** Code should clearly communicate what it's trying to do. Use good names, small functions, and standard patterns.
+4. **Minimizes the number of classes and methods.** Pragmatism over dogma — don't create unnecessary abstractions just to follow a rule.
+
+---
+
+## General Principles
+
+- **Boy Scout Rule:** Always leave the code cleaner than you found it. Every commit should improve the codebase slightly.
+- **Principle of Least Surprise:** Code should behave exactly the way a reasonable developer would expect — no hidden behavior, no magic.
+- **No dead code.** Delete unused variables, functions, imports, and unreachable branches. Version control preserves history.
+- **No magic numbers or strings.** Replace literals with named constants that explain their meaning.
+- **Keep cyclomatic complexity low.** When a function has too many branches or nested conditions, extract and simplify.
+- **Don't optimize prematurely.** Make it work → make it right → make it fast. Optimize only with profiler evidence.
+- **Avoid deep nesting.** More than 2–3 levels of nesting is a sign you need early returns, extracted functions, or a redesign.
+- **Fail fast.** Validate inputs early and loudly. Don't let bad data propagate deep into the system before causing an error.

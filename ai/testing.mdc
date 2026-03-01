@@ -10,7 +10,9 @@ These rules govern how tests are written and how the TDD workflow is followed. T
 
 ---
 
-## TDD Workflow (Default for Logic Changes)
+## TDD Workflow
+
+TDD is the preferred approach for complex logic. For straightforward wiring/integration changes, writing tests after is acceptable. Ask the user if unsure.
 
 Follow Test-Driven Development for code that contains logic:
 
@@ -43,7 +45,7 @@ Follow Test-Driven Development for code that contains logic:
 
 ## Mocking
 
-- **Mock at the network level, not the component level.** Prefer mocking HTTP/API calls (e.g., MSW, `nock`, `fetch` mocks) over mocking React components or modules.
+- **Mock at the network level, not the component level.** Prefer mocking HTTP/API calls (e.g., MSW, `nock`, `fetch` mocks) over mocking React components or modules. Follow project-specific mocking conventions when they exist (see Conventions below).
 - If you must mock a component or module, acknowledge the limitation to the user.
 - **Don't over-mock.** If everything is mocked, you're testing your mocks, not your code.
 

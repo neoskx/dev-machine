@@ -75,4 +75,4 @@ These rules apply to ALL projects. Project-specific architecture rules take prio
 - **Prop drilling.** More than 2-3 levels deep means you need context, composition, or a state management solution.
 - **Premature abstraction.** Don't abstract until you have 3+ concrete cases. Wrong abstractions are worse than duplication.
 - **Bidirectional dependencies.** Module A imports from B and B imports from A — this creates fragile coupling. Introduce a shared interface or restructure.
-- **Stringly-typed code.** Don't use raw strings where enums, union types, or constants would catch errors at compile time.
+- **Stringly-typed code.** Don't use raw strings where union types, `as const` objects, enums, or constants would catch errors at compile time.

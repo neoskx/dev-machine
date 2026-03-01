@@ -1,7 +1,7 @@
 ---
 description: Performance best practices for full-stack web development.
 globs: **/*.{js,jsx,ts,tsx,css,scss}
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Performance Standards

@@ -1,7 +1,8 @@
 ---
 description: TypeScript strict patterns and best practices.
 globs: **/*.{ts,tsx}
-alwaysApply: false
+# alwaysApply: false
+alwaysApply: true
 ---
 
 # TypeScript Standards
@@ -25,7 +26,9 @@ These rules apply to all TypeScript code. Project-specific TypeScript rules take
 
 ```typescript
 // Prefer
-type Result = { status: 'success'; data: User } | { status: 'error'; message: string };
+type Result =
+  | { status: "success"; data: User }
+  | { status: "error"; message: string };
 
 // Avoid
 type Result = { status: string; data?: User; message?: string };
@@ -59,6 +62,7 @@ function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] { ... }
 
 ## Patterns
 
+- When a project already uses enums as a convention, follow the project pattern.
 - **Narrow early, use broadly.** Validate and narrow types at the boundary (API responses, user input), then pass strongly-typed data through the system.
 - **Use utility types.** `Pick`, `Omit`, `Partial`, `Required`, `Record`, `Readonly` — don't reinvent them.
 - **Avoid enums for new code.** Use `as const` objects or string literal unions instead — they're more portable and tree-shakeable.

@@ -30,7 +30,7 @@ These rules apply to ALL projects. Project-specific security rules take priority
 
 ## Common Vulnerabilities
 
-- **XSS (Cross-Site Scripting):** Never use `dangerouslySetInnerHTML`, `innerHTML`, or `eval()` with untrusted data. Use framework-provided escaping (React auto-escapes JSX by default — don't bypass it).
+- **XSS (Cross-Site Scripting):** Never use `dangerouslySetInnerHTML`, `innerHTML`, or `eval()` with untrusted data. Use framework-provided escaping (React auto-escapes JSX by default — don't bypass it). When the data is sanitized server-side or at the boundary, document why it's safe.
 - **SQL Injection:** Always use parameterized queries or an ORM. Never concatenate user input into SQL strings.
 - **CSRF (Cross-Site Request Forgery):** Use CSRF tokens for state-changing requests. Validate `Origin`/`Referer` headers on the server.
 - **Path Traversal:** Never construct file paths from user input without validation. Reject `../` and absolute paths.

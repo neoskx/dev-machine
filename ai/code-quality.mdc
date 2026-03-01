@@ -18,7 +18,7 @@ For architecture/SOLID, see `architecture.mdc`. For testing/TDD, see `testing.md
 - Avoid disinformation. Never use misleading abbreviations or names that suggest a different type/structure (e.g., avoid `accountList` if it's not a `List`).
 - Make **meaningful distinctions**. Don't use noise words (`data`, `info`, `the`, `obj`, `a`) to differentiate names — they add no meaning.
 - Use **pronounceable, searchable names**. Avoid single-letter variables (except loop counters `i`, `j`) and magic numbers — use named constants.
-- **No encodings.** Drop Hungarian notation, member prefixes (`m_`, `_`). Modern tooling makes them obsolete.
+- **No encodings.** Drop Hungarian notation, member prefixes (`m_`, `_`). Modern tooling makes them obsolete. Exception: `_` prefix for intentionally unused variables (e.g., `_event`) is acceptable as a convention to suppress linter warnings.
 - **One word per concept.** Don't mix `fetch`, `retrieve`, `get`, and `load` for the same operation across the codebase. Pick one and be consistent.
 - **Boolean names** should read as questions: `isEmpty`, `hasPermission`, `isValid`.
 - **Functions/methods** → verbs or verb phrases: `sendEmail`, `calculateTotal`, `isExpired`.
@@ -65,6 +65,7 @@ For architecture/SOLID, see `architecture.mdc`. For testing/TDD, see `testing.md
 - **Vertical grouping:** Group related lines together. Separate unrelated concepts with blank lines.
 - **Indentation:** Respect indentation rigorously. Never collapse control structures onto a single line.
 - **Team rules override personal style.** If a `.editorconfig`, `.eslintrc`, or formatter config exists, follow it without deviation.
+- **Run the project formatter before committing.** Generated code must match the project's formatting exactly. Run the project's format command (e.g., `prettier`, `npm run format:fix`) on changed files. Don't rely on writing correctly-formatted code by hand — always verify with the tool.
 
 ---
 

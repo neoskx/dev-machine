@@ -18,10 +18,11 @@ At the start of every task, decide whether it needs a plan:
 
 Before creating a new plan, check if one already exists:
 
-1. Run `echo $AI_AGENT_PLANS_FOLDER` to resolve the plans directory. If empty, use `~/.ai-agent-plans/`.
-2. Look for an existing plan in `{plans_dir}/{project-name}/` that matches the current work.
-3. If a plan exists, **read both `plan.md` and `log.md`** to restore context. Update them — don't recreate.
-4. If no plan exists and the task warrants one, read `~/.ai-rules/planning-templates.mdc` for the full templates and directory structure, then create the plan.
+Plans directory: `$AI_AGENT_PLANS_FOLDER` if set, otherwise `~/.ai-agent-plans/`.
+
+1. Look for an existing plan in `{plans_dir}/{project-name}/` that matches the current work.
+2. If a plan exists, **read both `plan.md` and `log.md`** to restore context. Update them — don't recreate.
+3. If no plan exists and the task warrants one, read `~/.ai-rules/planning-templates.mdc` for the full templates and directory structure, then create the plan.
 
 ## Retrospective — Improve the Rules
 

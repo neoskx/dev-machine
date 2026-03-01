@@ -6,6 +6,29 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-01 (audit pass 3 — consistency and conflict resolution)
+
+### Changed
+
+- **`accessibility.mdc`** — Updated frontmatter from `alwaysApply: false` to `alwaysApply: true` for consistency with other always-loaded files.
+- **`performance.mdc`** — Updated frontmatter from `alwaysApply: false` to `alwaysApply: true` for consistency with other always-loaded files.
+- **`architecture.mdc`** — Aligned enum wording in "Patterns to Avoid" with `typescript.mdc`. Changed "enums, union types, or constants" to "union types, `as const` objects, enums, or constants" to reflect preferred alternatives.
+- **`testing.mdc`** — Added project-override cross-reference to Mocking section: "Follow project-specific mocking conventions when they exist (see Conventions below)." Resolves conflict where personal rule says "mock at network level" but projects may use module-level mocks.
+- **`planning.mdc`** — Simplified plans directory resolution from a 4-step process with `echo $AI_AGENT_PLANS_FOLDER` to a one-liner: "`$AI_AGENT_PLANS_FOLDER` if set, otherwise `~/.ai-agent-plans/`."
+
+### Changed (project files)
+
+- **`CLAUDE.md`** (in creator-hub workspace) — Slimmed from 75-line duplicate of `AI-AGENTS.md` content to a 4-line redirect. Both files were being injected into every Cursor conversation via `always_applied_workspace_rules`, doubling context token usage.
+
+- **`rules.md`** — Added date verification guidance to Process #5: "For date-sensitive operations, verify the current date with `date` — the system prompt date goes stale in long sessions." Discovered when changelog was written with Feb 27 date in a conversation that started Feb 27 but continued to Mar 1. Strengthened Process #5 to explicitly require running the project's formatter, linter, and type-checker before committing, with zero lint warnings/errors as the bar.
+- **`code-quality.mdc`** — Added "Run the project formatter before committing" rule to Formatting section. Generated code must be verified with the project's format tool, not hand-formatted.
+
+### Rationale
+
+Follow-up audit after adding self-improvement rules (#7, #8) to `rules.md`. Focused on resolving remaining inconsistencies: frontmatter alignment, enum guidance across files, mocking rule conflict with project conventions, verbose planning instructions, duplicate project entry points wasting context tokens, stale date in long-running conversations, and ensuring generated code passes project formatting and lint checks.
+
+---
+
 ## 2026-02-27 (audit pass 2)
 
 ### Changed

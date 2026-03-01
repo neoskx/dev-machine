@@ -1,7 +1,7 @@
 ---
 description: Accessibility (a11y) standards for web development. Ensure all UI is usable by everyone.
 globs: **/*.{jsx,tsx,html,css,scss}
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Accessibility Standards

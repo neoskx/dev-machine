@@ -1,7 +1,6 @@
 ---
 description: TypeScript strict patterns and best practices.
 globs: **/*.{ts,tsx}
-# alwaysApply: false
 alwaysApply: true
 ---
 

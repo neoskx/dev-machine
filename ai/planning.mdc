@@ -51,3 +51,4 @@ This creates a continuous improvement loop: work → reflect → improve rules �
 - One plan per initiative. Don't create a plan for each sub-task.
 - Plans are working documents. Update status, check off tasks, and log decisions as you go.
 - Share the plan with the user for approval before starting complex implementations.
+- `TodoWrite` is for **in-session task tracking only** — it does not persist across conversations. Always create `plan.md`/`log.md` for qualifying tasks, even if also using `TodoWrite`. The plan files are what future sessions read to restore context.

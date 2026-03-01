@@ -6,6 +6,18 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-01 (planning clarity — TodoWrite vs persistent plans)
+
+### Changed
+
+- **`planning.mdc`** — Added key rule clarifying that `TodoWrite` is session-scoped and does NOT replace persistent `plan.md`/`log.md` files. Discovered during CRK-5554 implementation: the agent used `TodoWrite` for task tracking but missed creating plan files, losing context for future sessions.
+
+### Rationale
+
+In a resumed conversation with summarized context, the "Pending Tasks" from `TodoWrite` gave the impression that planning was done. But `TodoWrite` data vanishes between sessions. The new rule makes the distinction explicit so agents always create persistent plan files for qualifying tasks.
+
+---
+
 ## 2026-03-01 (audit pass 3 — consistency and conflict resolution)
 
 ### Changed

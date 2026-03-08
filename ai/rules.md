@@ -16,17 +16,18 @@ These are my personal defaults. They apply to ALL projects as a baseline.
 | `security.mdc`           | Always                    | Security best practices                                          |
 | `architecture.mdc`       | Always                    | Architecture, API design, SOLID, observability                   |
 | `git.mdc`                | Always                    | Git workflow, commits, code review                               |
-| `planning.mdc`           | Always                    | Evaluate whether task needs a plan, check for existing plans     |
+| `planning.mdc`           | Always                    | Plan-first workflow — every task gets a plan, no exceptions      |
 | `typescript.mdc`         | Always                    | TypeScript strict patterns                                       |
 | `accessibility.mdc`      | Always (for JSX/TSX/HTML) | Accessibility (a11y) standards                                   |
 | `performance.mdc`        | Always (for JS/TS work)   | Web performance, Core Web Vitals, loading strategy               |
-| `planning-templates.mdc` | On demand                 | Full plan/log templates — loaded when creating a new plan        |
+| `planning-templates.mdc` | On demand                 | Templates for plan.md, changelog.md, chat.md, log-NN.md         |
 | `CHANGELOG.md`           | On demand                 | Rule change history — read during retrospectives                 |
 
 ---
 
 ## Process
 
+0. **Always read the rule files.** Conversation summaries are not a substitute. When a session starts with a prior summary, still read every "Always" file in the table above. Summaries may omit rules, contain stale context, or propagate errors from prior sessions.
 1. **Project rules take priority.** If the project has `.ai/rules/`, `.cursor/rules/`, `CLAUDE.md`, or `AI-AGENTS.md`, those rules override anything here. Don't manually re-read them — the editor loads them automatically.
 2. **Follow existing patterns.** Before creating anything, check how the codebase already does it. Match the conventions exactly.
 3. **Ask before creating new files.** If unsure whether a new file is needed, ask. Prefer editing existing files.

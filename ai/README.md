@@ -34,8 +34,8 @@ Read and follow rules from ~/.ai-rules/rules.md and all .mdc files in that direc
 ├── typescript.mdc         # TypeScript strict patterns (scoped to .ts/.tsx)
 ├── architecture.mdc       # Architecture, API design, SOLID
 ├── git.mdc                # Git workflow, commits, code review
-├── planning.mdc           # Lightweight trigger — evaluate if task needs a plan
-├── planning-templates.mdc # Full plan/log templates (loaded on demand)
+├── planning.mdc           # Plan-first workflow — every task gets a plan
+├── planning-templates.mdc # Templates: plan.md, changelog.md, chat.md, log-NN.md (on demand)
 ├── accessibility.mdc      # Accessibility (a11y) standards (scoped to .jsx/.tsx/.html)
 ├── performance.mdc        # Web performance, Core Web Vitals (scoped to .js/.jsx/.ts/.tsx)
 └── install.sh             # Symlink setup script
@@ -85,7 +85,7 @@ The rules evolve through a built-in retrospective cycle:
 work → reflect → propose changes → user approves → update rules + CHANGELOG + README → work better
 ```
 
-At the end of every planned task, the agent:
+At the end of every task, the agent:
 1. Reflects on whether any rules were missing, wrong, or redundant
 2. Reads `CHANGELOG.md` to avoid re-suggesting previously reverted rules
 3. Proposes changes to the user

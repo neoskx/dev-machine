@@ -1,54 +1,120 @@
 ---
-description: Evaluate whether the current task needs a plan. Lightweight trigger — always loaded.
+description: Plan-first workflow. Every task gets a plan. No exceptions unless user explicitly opts out.
 globs:
 alwaysApply: true
 ---
 
-# Planning — When and How
+# Planning — Always Plan First
 
-## Evaluate Every Task
+## Rule: Every Task Gets a Plan
 
-At the start of every task, decide whether it needs a plan:
+Every task — feature, bugfix, adhoc — gets a plan before any code is written. No exceptions unless the user explicitly says "skip the plan" or "just do it."
 
-- **Create a plan**: Features with 3+ steps, system refactors, multi-file changes, architecture decisions, migrations.
-- **Skip planning**: Bug fixes, hotfixes, one-liner changes, single-file edits, renaming, formatting, small improvements.
-- If unsure, ask the user.
+Do NOT evaluate whether a task "needs" a plan. Do NOT skip planning for "simple" tasks. The same structure applies to all tasks. Consistency over convenience.
 
-## Check for Existing Plans
+## Workflow (Strict Sequence)
 
-Before creating a new plan, check if one already exists:
+Follow these steps in order. Do NOT skip ahead.
 
-Plans directory: `$AI_AGENT_PLANS_FOLDER` if set, otherwise `~/.ai-agent-plans/`.
+1. **CHECK** — Read `$AI_AGENT_PLANS_FOLDER` (env var). Search for an existing plan that matches the current task. Also search for related plans (same ticket, same feature area) to load as context.
+2. **PLAN** — If no plan exists, create the task folder and `plan.md`. If a plan exists, read all files: `plan.md` → `changelog.md` → `chat.md` → latest `log-NN.md`. Update the plan if needed.
+3. **DISCUSS** — Share the plan with the user. Iterate until the user approves. Do NOT write code until the user confirms.
+4. **EXECUTE** — Work through tasks. Check off completed items in `plan.md` `## Tasks`.
+5. **LOG** — After each meaningful work iteration, create/update `log-NN.md` (increment the number for each new iteration).
+6. **CHAT** — Update `chat.md` with session info and key User/Agent exchanges from this session.
+7. **COMMIT** — At natural breakpoints.
+8. **RETROSPECT** — Before closing, reflect on the rules (see Retrospective section below).
 
-1. Look for an existing plan in `{plans_dir}/{project-name}/` that matches the current work.
-2. If a plan exists, **read both `plan.md` and `log.md`** to restore context. Update them — don't recreate.
-3. If no plan exists and the task warrants one, read `~/.ai-rules/planning-templates.mdc` for the full templates and directory structure, then create the plan.
+## Plans Directory
+
+Location: `$AI_AGENT_PLANS_FOLDER` environment variable. Always check this first. Never hardcode a default path.
+
+If the env var is not set, ask the user where to store plans.
+
+## Folder Naming Convention
+
+Folder names follow git branch convention. Three types only:
+
+| Type       | Pattern                          | Example                                |
+|------------|----------------------------------|----------------------------------------|
+| `feature/` | `{jira-ticket}-{description}`   | `feature/crk-1234-user-export`         |
+| `adhoc/`   | `{prefix}-{description}`        | `adhoc/refactor-auth-flow`             |
+| `bugfix/`  | `{jira-ticket}-{description}`   | `bugfix/crk-5678-null-avatar`          |
+
+Adhoc prefixes: `test-`, `doc-`, `refactor-`, or just the description directly.
+
+**Always ask the user to confirm the folder name before creating it.**
+
+## Task Files
+
+Every task folder contains:
+
+```
+{plans_dir}/{type}/{name}/
+├── plan.md          # Current truth — always the latest version
+├── changelog.md     # How the plan evolved over iterations
+├── chat.md          # Conversation log with key User/Agent exchanges + session IDs
+├── log-01.md        # Iteration 1 execution log
+├── log-02.md        # Iteration 2 execution log
+└── ...
+```
+
+Read `~/.ai-rules/planning-templates.mdc` for full templates when creating these files.
+
+## Resuming Work
+
+When a user says "resume {task}" or references an existing task:
+
+1. Read all files in the task folder: `plan.md` → `changelog.md` → `chat.md` → latest `log-NN.md`
+2. Understand current status from `plan.md` `## Tasks` checklist
+3. Continue from where the last session left off
+4. Create a new `log-NN.md` for this session's work
+
+## Starting a New Task Related to an Existing One
+
+When a user references a related task (e.g., "fix a bug related to feature/crk-1234-user-export"):
+
+1. Read the related task's `plan.md`, `chat.md`, and latest `log-NN.md` for context
+2. Create a new task folder for the new work (e.g., `bugfix/crk-5678-export-null-check`)
+3. Add a cross-reference in the new plan's `## Related Tasks` section
+
+## Example User Prompts
+
+The agent should understand these patterns:
+
+**New task:**
+> I want to work on [description].
+
+**Resume existing task:**
+> Resume adhoc/refactor-ai-rules-workflow
+
+**Bug related to previous work:**
+> Fix a bug in user export — related to feature/crk-1234-user-export
+
+## Key Rules
+
+- Plan BEFORE code. No exceptions without explicit user opt-out.
+- One plan per task. Don't create sub-plans.
+- Plans are working documents. Update status, check off tasks, log decisions as you go.
+- `TodoWrite` is for **in-session tracking only** — it does not persist. Always maintain the plan files for cross-session continuity.
+- Same structure for all tasks. No "lightweight" vs "full" distinction.
 
 ## Retrospective — Improve the Rules
 
 Before closing out any planned task, reflect on the rules themselves:
 
-1. **Were any rules missing** that would have helped during this task?
-2. **Were any rules wrong or too strict** for this context?
-3. **Did a new pattern or skill emerge** that should be captured?
-4. **Were any rules redundant or confusing** — overlapping or contradicting each other?
+1. Were any rules missing that would have helped?
+2. Were any rules wrong or too strict?
+3. Did a new pattern or skill emerge that should be captured?
+4. Were any rules redundant or confusing?
 
-If you have suggestions, share them with the user as a brief summary. Only update `~/.ai-rules/` files when the user approves. When rules are changed:
+If you have suggestions, share them with the user. Only update `~/.ai-rules/` files when the user approves. When rules are changed:
 
-1. Update the rule file(s) themselves.
+1. Update the rule file(s).
 2. Update `~/.ai-rules/CHANGELOG.md` with what changed and why.
-3. Update `~/.ai-rules/README.md` to reflect the latest file structure and descriptions.
+3. Update `~/.ai-rules/README.md` to reflect the latest file structure.
 4. Update the file table in `~/.ai-rules/rules.md` if files were added or removed.
 
-Log the reflection in `log.md` under a `### Rules Feedback` heading.
+Log the reflection in the current `log-NN.md` under a `### Rules Feedback` heading.
 
 Before suggesting changes, read `~/.ai-rules/CHANGELOG.md` to avoid re-suggesting previously reverted rules.
-
-This creates a continuous improvement loop: work → reflect → improve rules → work better.
-
-## Key Rules
-
-- One plan per initiative. Don't create a plan for each sub-task.
-- Plans are working documents. Update status, check off tasks, and log decisions as you go.
-- Share the plan with the user for approval before starting complex implementations.
-- `TodoWrite` is for **in-session task tracking only** — it does not persist across conversations. Always create `plan.md`/`log.md` for qualifying tasks, even if also using `TodoWrite`. The plan files are what future sessions read to restore context.

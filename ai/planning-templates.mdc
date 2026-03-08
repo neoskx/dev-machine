@@ -1,41 +1,34 @@
 ---
-description: Full planning templates and workflow. Read this when creating or restructuring a plan — referenced by planning.mdc.
+description: Full planning templates and file structures. Read this when creating a new task plan — referenced by planning.mdc.
 globs:
 alwaysApply: false
 ---
 
-# Planning Templates & Workflow
+# Planning Templates
 
-This file contains the full templates for plan files. It is referenced by `planning.mdc` when a new plan needs to be created.
+This file contains templates for all task plan files. Referenced by `planning.mdc` when creating a new task.
 
 ---
 
 ## Directory Structure
 
-Each initiative gets its own directory with two files:
-
 ```
-{plans_dir}/{project-name}/
-└── {initiative-name}/
-    ├── plan.md        # What we intend to do
-    └── log.md         # What actually happened during execution
-```
-
-Examples:
-```
-~/.ai-agent-plans/creator-hub/
-├── feat-user-export/
-│   ├── plan.md
-│   └── log.md
-├── refactor-auth-flow/
-│   ├── plan.md
-│   └── log.md
-└── migrate-to-foundation-ui/
-    ├── plan.md
-    └── log.md
+$AI_AGENT_PLANS_FOLDER/{type}/{name}/
+├── plan.md          # Current truth — always the latest version
+├── changelog.md     # How the plan evolved over iterations
+├── chat.md          # Conversation log with key User/Agent exchanges + session IDs
+├── log-01.md        # Iteration 1 execution log
+├── log-02.md        # Iteration 2 execution log
+└── ...
 ```
 
-Use lowercase kebab-case for directory names. Prefix with type: `feat-`, `refactor-`, `fix-`, `migrate-`, `perf-`.
+### Folder Naming (same as git branches)
+
+| Type       | Pattern                          | Example                                      |
+|------------|----------------------------------|----------------------------------------------|
+| `feature/` | `{jira-ticket}-{description}`   | `feature/crk-1234-user-export`               |
+| `adhoc/`   | `{prefix}-{description}`        | `adhoc/refactor-auth-flow`, `adhoc/doc-api`  |
+| `bugfix/`  | `{jira-ticket}-{description}`   | `bugfix/crk-5678-null-avatar`                |
 
 ---
 
@@ -91,6 +84,10 @@ What needs to be mocked (APIs, services, modules) and at what level.
 - [ ] Step 2
 - [ ] Step 3
 
+## Related Tasks
+
+- `{type}/{name}` — {why it's related}
+
 ## Risks
 
 - {Risk}: {mitigation}
@@ -98,37 +95,120 @@ What needs to be mocked (APIs, services, modules) and at what level.
 
 ### Guidelines
 
-- The **Test Plan** feeds directly into TDD. Each test case becomes a Red-Green cycle.
-- **Acceptance Criteria** define "done". The task is complete when all criteria are met and all tests pass.
-- **Scope** prevents creep. If something is out of scope, it stays out — log it for a follow-up task.
+- **Status** reflects current state. Update it as work progresses.
+- **Tasks** is the canonical TODO list. This is the single source of truth for what's done and what's pending.
+- **Related Tasks** links to other plans in `$AI_AGENT_PLANS_FOLDER`. When starting a bugfix related to a feature, reference the feature plan here.
 - **Design** should explain trade-offs: what alternatives were considered and why this approach was chosen.
-- **Risks** should include unknowns, dependencies on other teams, and anything that could block or derail the work.
+- **Test Plan** feeds directly into TDD. Each test case becomes a Red-Green cycle.
+- **Scope** prevents creep. If something is out of scope, it stays out — log it for a follow-up task.
+- Keep plan.md as the **latest truth**. When the plan changes, update plan.md and record what changed in changelog.md.
 
 ---
 
-## log.md Template
+## changelog.md Template
 
 ```markdown
-# {Title} — Execution Log
+# {Title} — Plan Changelog
 
-## {date}
+## v1 — {date} (initial draft)
 
-### Decisions
+- {What was in the initial plan}
+
+## v2 — {date} ({reason for change})
+
+- {What changed and why}
+```
+
+### Guidelines
+
+- One entry per meaningful plan revision.
+- Record WHY the plan changed, not just what changed.
+- Version numbers are simple incrementing integers (v1, v2, v3...).
+
+---
+
+## chat.md Template
+
+```markdown
+# {Title} — Conversation Log
+
+## Sessions
+
+| # | Date       | Agent        | Session ID / Transcript        | Summary                            |
+|---|------------|--------------|--------------------------------|------------------------------------|
+| 1 | {date}     | {tool name}  | {session-id or transcript ref} | {one-line summary}                 |
+
+## Key Conversations
+
+### Session 1 — {date}
+
+**User**
+{The question or instruction the user gave}
+
+**Agent**
+{The agent's response — key analysis, recommendations, decisions}
+
+**User**
+{Follow-up, confirmation, or course correction}
+
+**Agent**
+{Response, updated approach}
+```
+
+### Guidelines
+
+- **Sessions table**: Quick reference for all sessions. Include enough to find and resume any session.
+  - Cursor: reference agent transcript ID from `~/.cursor/projects/.../agent-transcripts/`
+  - Claude Code: session name (use `claude --resume {name}`)
+  - Other tools: whatever identifier allows resuming
+- **Key Conversations**: Capture the exchanges that contain decisions, requirements, trade-offs, and reasoning. Skip routine tool invocations and file reads.
+- A future reader (teammate or agent) should be able to understand from chat.md: what was discussed, what decisions were made, and why.
+- Don't log full transcripts — that's what the tools store natively. Log the conversations that matter.
+
+---
+
+## log-NN.md Template
+
+```markdown
+# {Title} — Iteration {NN}
+
+**Date**: {date}
+**Agent**: {tool name}
+**Session**: {session ID or reference}
+
+## What Was Done
+
+- Completed: {task from plan.md}
+- Completed: {task from plan.md}
+
+## Decisions
+
 - {Decision made and why}
 
-### Discoveries
+## Discoveries
+
 - {Unexpected behavior, edge cases found}
 
-### Issues
+## Issues
+
 - {Errors encountered and resolution}
 
-### Deviations
+## Deviations
+
 - {Changes from original plan and why}
 
-### Rules Feedback
-- {Any missing rules, wrong rules, new patterns, or skills discovered}
-- {Suggested changes to ~/.ai-rules/ files — create, update, or delete}
+## Rules Feedback
+
+- {Any missing rules, wrong rules, new patterns discovered}
 ```
+
+### Guidelines
+
+- One log file per iteration. Increment the number: `log-01.md`, `log-02.md`, `log-03.md`, ...
+- An "iteration" is a meaningful work session — typically one agent session or one work block.
+- Record what ACTUALLY happened, not what you planned to do.
+- Include enough context that a new agent can understand what was done and pick up where this left off.
+- Omit sections that have nothing to report (e.g., skip `## Deviations` if there were none).
 
 ### What goes in the log
 
@@ -143,24 +223,18 @@ What needs to be mocked (APIs, services, modules) and at what level.
 - Verbose terminal output (that's what the terminal is for)
 - Every file touched (that's what git is for)
 - Routine task completion updates (check off tasks in `plan.md` instead)
+- Full conversation transcripts (that goes in `chat.md`)
 
 ---
 
-## Workflow
+## File Creation Order
 
-1. **Create the plan before writing code.** Share with the user for approval on complex tasks.
-2. **Write the test plan first.** This drives the TDD workflow — each test case becomes a failing test.
-3. **Update plan.md as you go.** Check off completed tasks, update status.
-4. **Write to log.md during execution.** Capture decisions, discoveries, and deviations as they happen.
-5. **Read both files at the start of each session.** If resuming work, read existing plan and log to restore context.
-6. **Retrospective before closing.** Reflect on the rules (see `planning.mdc` Retrospective section). Log feedback in `log.md` under `### Rules Feedback`. Share suggestions with the user.
-7. **Mark completed when done.** Set status to `completed`, ensure all acceptance criteria and tasks are checked off.
+When starting a new task:
 
----
-
-## Rules
-
-- Plans are working documents, not permanent artifacts. Don't over-polish them.
-- One plan per initiative. Don't create a plan for each sub-task.
-- If the plan changes significantly, update it — don't create a new one. Log the change in `log.md`.
-- Plans should be readable by the user and by future AI sessions picking up the work.
+1. Create the folder (after user confirms the name)
+2. Create `plan.md` (draft status)
+3. Create `changelog.md` (v1 entry)
+4. Create `chat.md` (first session entry)
+5. Share plan with user → discuss → iterate → update plan.md and changelog.md
+6. Once approved, change status to `in-progress` and begin execution
+7. Create `log-01.md` after the first iteration of work

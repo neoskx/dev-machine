@@ -6,6 +6,45 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-08 (planning workflow overhaul)
+
+### Changed
+
+- **`planning.mdc`** — Complete rewrite. Changed from "evaluate whether task needs a plan" to "every task gets a plan, no exceptions." Enforced strict workflow sequence: Check → Plan → Discuss → Confirm → Execute → Log → Chat → Commit → Retrospect. Added `$AI_AGENT_PLANS_FOLDER` env var as mandatory (no hardcoded fallback). Added folder naming convention matching git branches (feature/, adhoc/, bugfix/). Added cross-reference support via `## Related Tasks`. Added "new agent bootstrap" guidance for resuming tasks and picking up related work.
+
+- **`planning-templates.mdc`** — Complete rewrite. Replaced two-file structure (plan.md + log.md) with four-file structure: `plan.md` (current truth), `changelog.md` (plan evolution), `chat.md` (conversation log with key User/Agent exchanges + session IDs), `log-NN.md` (per-iteration execution logs). Added conversational chat.md format for team knowledge transfer. Added file creation order. Added guidelines for what goes in each file.
+
+- **`rules.md`** — Updated file table descriptions for planning.mdc and planning-templates.mdc.
+
+- **`README.md`** — Updated file structure descriptions to match new planning system.
+
+### Rationale
+
+After a week of using the rules system, several failure modes were identified:
+1. Agent inconsistently followed planning — the "evaluate whether to plan" rule gave too much discretion, leading to skipped plans
+2. Repo-based plan directories didn't support cross-repo tasks — switched to task-based with git branch naming
+3. No conversation persistence — added chat.md with User/Agent exchange format for team knowledge transfer
+4. Plans created after task completion instead of before — enforced plan-first-then-execute as a hard rule
+5. Single log.md file grew unwieldy and was only written at the end — switched to per-iteration log-NN.md files
+6. No way to track plan evolution — added changelog.md per task
+7. Agent didn't check $AI_AGENT_PLANS_FOLDER env var — made it mandatory with no hardcoded fallback
+
+Inspired by Claude Code's "Explore → Plan → Implement → Commit" workflow and the gperkins-cursor-chats conversation logging pattern.
+
+---
+
+## 2026-03-01 (conversation summary bypass fix)
+
+### Changed
+
+- **`rules.md`** — Added Process rule #0: "Always read the rule files. Conversation summaries are not a substitute." When a session starts with a prior summary, the agent must still read every "Always" file. Summaries may omit rules, contain stale context, or propagate errors from prior sessions.
+
+### Rationale
+
+During a crawler update task, the agent relied on a conversation summary that listed rules as "already loaded" but omitted `planning.mdc`. This caused the agent to skip planning entirely, jump straight into multi-file implementation, and produce overly complex changes that had to be reverted. The same root cause was behind the earlier TodoWrite-vs-plan-files issue — summaries create a false sense of "already done."
+
+---
+
 ## 2026-03-01 (planning clarity — TodoWrite vs persistent plans)
 
 ### Changed

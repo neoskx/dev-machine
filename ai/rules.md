@@ -50,10 +50,12 @@ These are my personal defaults. They apply to ALL projects as a baseline.
 
 ### Phase 4: Commit
 
-13. **Ask before committing.** Show the user what will be committed and ask for confirmation. Never auto-commit without asking.
-14. **Commit task files.** Commit the task folder (`$AI_AGENT_TASKS_FOLDER/{type}/{name}/`) to its git repo. Use conventional commit format.
-15. **Commit rule changes.** If `~/.ai-rules/` was updated (self-evolution, rule fixes), commit those changes to the `~/.dev-machine` repo separately. Use conventional commit format.
-16. **Commit project code.** If the task involved code changes in a project repo, commit those to the project repo. Follow the project's branching model and commit conventions.
+13. **Finalize all task files first.** Update plan.md (mark completed), log.md (record final actions), chat.md (capture final exchange), and changelog.md to their final state BEFORE committing. Committed files must reflect the complete state — never commit then update.
+14. **Ask before committing.** Show the user what will be committed and ask for confirmation. Never auto-commit without asking.
+15. **Commit task files.** Commit the task folder (`$AI_AGENT_TASKS_FOLDER/{type}/{name}/`) to its git repo. Use conventional commit format.
+16. **Commit rule changes.** If `~/.ai-rules/` was updated (self-evolution, rule fixes), commit those changes to the `~/.dev-machine` repo. Use conventional commit format.
+17. **Commit project code.** If the task involved code changes in a project repo, commit those to the project repo. Follow the project's branching model and commit conventions.
+18. **Push.** Push all committed repos to remote.
 
 ---
 

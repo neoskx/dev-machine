@@ -13,13 +13,11 @@ This file contains templates for all task plan files. Referenced by `planning.md
 ## Directory Structure
 
 ```
-$AI_AGENT_PLANS_FOLDER/{type}/{name}/
+$AI_AGENT_TASKS_FOLDER/{type}/{name}/
 ├── plan.md          # Current truth — always the latest version
 ├── changelog.md     # How the plan evolved over iterations
 ├── chat.md          # Conversation log with key User/Agent exchanges + session IDs
-├── log-01.md        # Iteration 1 execution log
-├── log-02.md        # Iteration 2 execution log
-└── ...
+└── log.md           # Execution log — all agent actions, appended per iteration
 ```
 
 ### Folder Naming (same as git branches)
@@ -97,7 +95,7 @@ What needs to be mocked (APIs, services, modules) and at what level.
 
 - **Status** reflects current state. Update it as work progresses.
 - **Tasks** is the canonical TODO list. This is the single source of truth for what's done and what's pending.
-- **Related Tasks** links to other plans in `$AI_AGENT_PLANS_FOLDER`. When starting a bugfix related to a feature, reference the feature plan here.
+- **Related Tasks** links to other plans in `$AI_AGENT_TASKS_FOLDER`. When starting a bugfix related to a feature, reference the feature plan here.
 - **Design** should explain trade-offs: what alternatives were considered and why this approach was chosen.
 - **Test Plan** feeds directly into TDD. Each test case becomes a Red-Green cycle.
 - **Scope** prevents creep. If something is out of scope, it stays out — log it for a follow-up task.
@@ -167,63 +165,67 @@ What needs to be mocked (APIs, services, modules) and at what level.
 
 ---
 
-## log-NN.md Template
+## log.md Template
 
 ```markdown
-# {Title} — Iteration {NN}
+# {Title} — Execution Log
 
-**Date**: {date}
+## Iteration 1 — {date}
+
 **Agent**: {tool name}
 **Session**: {session ID or reference}
 
-## What Was Done
+### Actions
 
-- Completed: {task from plan.md}
-- Completed: {task from plan.md}
+1. {Action taken — e.g., Read file X, Created file Y, Updated Z}
+2. {Next action}
+3. ...
 
-## Decisions
+### Decisions
 
 - {Decision made and why}
 
-## Discoveries
+### Discoveries
 
 - {Unexpected behavior, edge cases found}
 
-## Issues
+### Issues
 
 - {Errors encountered and resolution}
 
-## Deviations
+### Deviations
 
 - {Changes from original plan and why}
 
-## Rules Feedback
+### Rules Feedback
 
 - {Any missing rules, wrong rules, new patterns discovered}
+
+---
+
+## Iteration 2 — {date}
+
+...
 ```
 
 ### Guidelines
 
-- One log file per iteration. Increment the number: `log-01.md`, `log-02.md`, `log-03.md`, ...
-- An "iteration" is a meaningful work session — typically one agent session or one work block.
-- Record what ACTUALLY happened, not what you planned to do.
-- Include enough context that a new agent can understand what was done and pick up where this left off.
-- Omit sections that have nothing to report (e.g., skip `## Deviations` if there were none).
+- One `log.md` per task. Append a new `## Iteration N` section for each work session.
+- Create `log.md` at the START of the first session. Update it incrementally as you work — don't wait until the end.
 
 ### What goes in the log
 
+- **All agent actions** — every file read, file written, file edited, command run, research done, API fetched. The `## Actions` section is a numbered sequential list of everything the agent did. This is the primary record of what happened.
 - Key decisions made during implementation (and why)
 - Discoveries — unexpected behavior, edge cases found
-- Errors encountered and how they were resolved
+- Errors and mistakes (including agent mistakes) and how they were resolved
 - Deviations from the original plan
-- Context that helps someone (or a future AI session) pick up the work
 
 ### What does NOT go in the log
 
-- Verbose terminal output (that's what the terminal is for)
-- Every file touched (that's what git is for)
-- Routine task completion updates (check off tasks in `plan.md` instead)
+- Verbose terminal output (reference the command, not the full output)
 - Full conversation transcripts (that goes in `chat.md`)
+- Routine status updates (check off tasks in `plan.md` instead)
 
 ---
 
@@ -237,4 +239,4 @@ When starting a new task:
 4. Create `chat.md` (first session entry)
 5. Share plan with user → discuss → iterate → update plan.md and changelog.md
 6. Once approved, change status to `in-progress` and begin execution
-7. Create `log-01.md` after the first iteration of work
+7. Create `log.md` at the start of the first work session

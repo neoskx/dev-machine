@@ -6,11 +6,23 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-08 (git branching alignment + retrospective)
+
+### Changed
+
+- **`git.mdc`** — Updated Branching section to match task folder naming convention. Replaced `feat/`, `fix/` shorthand with `feature/`, `bugfix/`, `adhoc/`. Added table with examples including `adhoc/test-`, `adhoc/doc-`, `adhoc/perf-`. Cross-referenced `planning.mdc`.
+
+### Rationale
+
+Branch names and task folder names should use the same convention — one pattern to learn, one pattern to follow. Previously `git.mdc` used `feat/` and `fix/` while task folders used `feature/` and `bugfix/`.
+
+---
+
 ## 2026-03-08 (planning workflow overhaul)
 
 ### Changed
 
-- **`planning.mdc`** — Complete rewrite. Changed from "evaluate whether task needs a plan" to "every task gets a plan, no exceptions." Enforced strict workflow sequence: Check → Plan → Discuss → Confirm → Execute → Log → Chat → Commit → Retrospect. Added `$AI_AGENT_PLANS_FOLDER` env var as mandatory (no hardcoded fallback). Added folder naming convention matching git branches (feature/, adhoc/, bugfix/). Added cross-reference support via `## Related Tasks`. Added "new agent bootstrap" guidance for resuming tasks and picking up related work.
+- **`planning.mdc`** — Complete rewrite. Changed from "evaluate whether task needs a plan" to "every task gets a plan, no exceptions." Enforced strict workflow sequence: Check → Plan → Discuss → Confirm → Execute → Log → Chat → Commit → Retrospect. Added `$AI_AGENT_TASKS_FOLDER` env var as mandatory (no hardcoded fallback). Added folder naming convention matching git branches (feature/, adhoc/, bugfix/). Added cross-reference support via `## Related Tasks`. Added "new agent bootstrap" guidance for resuming tasks and picking up related work.
 
 - **`planning-templates.mdc`** — Complete rewrite. Replaced two-file structure (plan.md + log.md) with four-file structure: `plan.md` (current truth), `changelog.md` (plan evolution), `chat.md` (conversation log with key User/Agent exchanges + session IDs), `log-NN.md` (per-iteration execution logs). Added conversational chat.md format for team knowledge transfer. Added file creation order. Added guidelines for what goes in each file.
 
@@ -27,7 +39,7 @@ After a week of using the rules system, several failure modes were identified:
 4. Plans created after task completion instead of before — enforced plan-first-then-execute as a hard rule
 5. Single log.md file grew unwieldy and was only written at the end — switched to per-iteration log-NN.md files
 6. No way to track plan evolution — added changelog.md per task
-7. Agent didn't check $AI_AGENT_PLANS_FOLDER env var — made it mandatory with no hardcoded fallback
+7. Agent didn't check $AI_AGENT_TASKS_FOLDER env var — made it mandatory with no hardcoded fallback. Renamed from $AI_AGENT_PLANS_FOLDER to $AI_AGENT_TASKS_FOLDER (folder contains more than just plans)
 
 Inspired by Claude Code's "Explore → Plan → Implement → Commit" workflow and the gperkins-cursor-chats conversation logging pattern.
 

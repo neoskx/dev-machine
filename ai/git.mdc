@@ -27,7 +27,13 @@ If the project has an established commit message style (check `git log`), follow
 
 - **Follow the project's branching model.** If the project uses trunk-based, GitFlow, or a custom model, follow it exactly.
 - **Short-lived branches.** Feature branches should live for days, not weeks. Long-lived branches accumulate merge conflicts and diverge from main.
-- **Descriptive branch names.** Use `type/ticket-description` format: `feat/CRK-1234-add-user-export`, `fix/CRK-5678-null-avatar`.
+- **Branch names match task folders.** Use the same naming convention as `$AI_AGENT_TASKS_FOLDER` (see `planning.mdc`). Three types:
+
+| Type       | Pattern                          | Examples                                                          |
+|------------|----------------------------------|-------------------------------------------------------------------|
+| `feature/` | `{jira-ticket}-{description}`   | `feature/crk-1234-user-export`                                    |
+| `bugfix/`  | `{jira-ticket}-{description}`   | `bugfix/crk-5678-null-avatar`                                     |
+| `adhoc/`   | `{prefix}-{description}`        | `adhoc/refactor-auth-flow`, `adhoc/test-search-edge-cases`, `adhoc/doc-api-migration-guide`, `adhoc/perf-reduce-bundle-size` |
 
 ---
 

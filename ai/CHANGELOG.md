@@ -6,6 +6,18 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-09 (draft PR rule)
+
+### Added
+
+- **`git.mdc`** — New rule under Pull Requests: always create draft PRs (`gh pr create --draft`). User reviews before marking ready for review.
+
+### Rationale
+
+User wants to review all PRs before they go to "ready for review" state.
+
+---
+
 ## 2026-03-09 (git attribution rule)
 
 ### Added

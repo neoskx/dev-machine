@@ -39,6 +39,7 @@ If the project has an established commit message style (check `git log`), follow
 
 ## Pull Requests
 
+- **Always create draft PRs.** Use `gh pr create --draft` so the user can review before marking ready for review. Never create a PR in "ready for review" state.
 - **Small PRs.** Aim for <400 lines changed. Large PRs get rubber-stamped, small PRs get real reviews.
 - **Self-review first.** Before requesting review, read the entire diff yourself. Catch the obvious issues.
 - **Write a meaningful description.** Include: what changed, why, how to test, and any risks or trade-offs.

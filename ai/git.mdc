@@ -47,6 +47,12 @@ If the project has an established commit message style (check `git log`), follow
 
 ---
 
+## Attribution
+
+- **All commits and PRs must appear as the user's own work.** Never include AI tool names (Cursor, Copilot, Claude, etc.) in commit messages, PR titles, PR descriptions, or branch names. The git author/committer must always be the user's configured identity — never modify `user.name` or `user.email`.
+
+---
+
 ## Safety
 
 - **Never force-push to shared branches** (`main`, `master`, `develop`) without explicit team agreement.

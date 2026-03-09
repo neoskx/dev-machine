@@ -6,6 +6,30 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-09 (git attribution rule)
+
+### Added
+
+- **`git.mdc`** — New "Attribution" section: all commits and PRs must appear as the user's own work. Never include AI tool names in commit messages, PR titles, PR descriptions, or branch names. Never modify `user.name` or `user.email`.
+
+### Rationale
+
+During CRK-5618, user explicitly requested that no commits or PRs show any AI tool attribution. This was already the implicit behavior (git config is the user's identity), but codifying it as a rule ensures it's never violated in future sessions.
+
+---
+
+## 2026-03-08 (checkpoint rule restructured into execute loop)
+
+### Changed
+
+- **`planning.mdc`** — Restructured step 4 (EXECUTE) from a list of files to update into an explicit Do → Checkpoint → Communicate → Repeat loop. Merged the standalone "Incremental File Updates (Checkpoint Rule)" section into step 4 so the checkpoint is part of the action sequence, not a separate section to remember. Added TodoWrite forcing function: create a standing reminder when an active task exists. Added anti-patterns section warning against batch updates, "I'll remember later," and following batch-update patterns from conversation summaries.
+
+### Rationale
+
+During CRK-5629, the agent read and understood the checkpoint rule but violated it 3 times in one session. Root cause: the rule was a separate section read at session start but not active during execution. The immediate task crowded out the process rule. A prior session's conversation summary showed batch updates, and the agent mimicked that pattern despite the rule saying otherwise. Fix: embed the checkpoint directly into the execute loop so it's encountered at every action, not just at session start. Add TodoWrite as a visible in-session reminder.
+
+---
+
 ## 2026-03-08 (git branching alignment + retrospective)
 
 ### Changed

@@ -17,7 +17,7 @@ Do NOT evaluate whether a task "needs" a plan. Do NOT skip planning for "simple"
 Follow these steps in order. Do NOT skip ahead.
 
 1. **CHECK** — Read `$AI_AGENT_TASKS_FOLDER` (env var). Search for an existing plan that matches the current task. Also search for related plans (same ticket, same feature area) to load as context.
-2. **PLAN** — If no plan exists, create the task folder and `plan.md`. If a plan exists, read all files: `plan.md` → `changelog.md` → `chat.md` → latest `log-NN.md`. Update the plan if needed.
+2. **PLAN** — If no plan exists, create the task folder and `plan.md`. If a plan exists, read all files: `plan.md` → `changelog.md` → `log.md`. Update the plan if needed.
 3. **DISCUSS** — Share the plan with the user. Iterate until the user approves. Do NOT write code until the user confirms.
 4. **EXECUTE** — Work through tasks using this loop for EVERY action:
    1. **Do** — Complete the action (write code, move files, answer a question).
@@ -28,8 +28,7 @@ Follow these steps in order. Do NOT skip ahead.
    Which files to update at each checkpoint:
    - **plan.md** — Check off tasks, update scope/design/risks.
    - **changelog.md** — Add entry when plan.md changes.
-   - **log.md** — Append actions to current iteration. Don't wait until end.
-   - **chat.md** — Capture significant decisions, direction changes, milestones.
+   - **log.md** — Append the exchange (User/Agent/Log) to the current session. Don't wait until end.
 
    **Forcing function**: When an active task exists, create a standing `TodoWrite` item: "PROCESS: Checkpoint task files after each decision point". This keeps the rule visible in-session. The todo is a reminder only — the plan files are the persistent record.
 
@@ -68,8 +67,7 @@ Every task folder contains:
 {plans_dir}/{type}/{name}/
 ├── plan.md          # Current truth — always the latest version
 ├── changelog.md     # How the plan evolved over iterations
-├── chat.md          # Conversation log with key User/Agent exchanges + session IDs
-└── log.md           # Execution log — all agent actions, appended per iteration
+└── log.md           # Combined conversation + execution log
 ```
 
 Read `~/.ai-rules/planning-templates.mdc` for full templates when creating these files.
@@ -78,16 +76,16 @@ Read `~/.ai-rules/planning-templates.mdc` for full templates when creating these
 
 When a user says "resume {task}" or references an existing task:
 
-1. Read all files in the task folder: `plan.md` → `changelog.md` → `chat.md` → `log.md`
+1. Read all files in the task folder: `plan.md` → `changelog.md` → `log.md`
 2. Understand current status from `plan.md` `## Tasks` checklist
 3. Continue from where the last session left off
-4. Append a new iteration section to `log.md` for this session's work
+4. Append a new `## Session N` section to `log.md` for this session's work
 
 ## Starting a New Task Related to an Existing One
 
 When a user references a related task (e.g., "fix a bug related to feature/crk-1234-user-export"):
 
-1. Read the related task's `plan.md`, `chat.md`, and latest `log-NN.md` for context
+1. Read the related task's `plan.md` and `log.md` for context
 2. Create a new task folder for the new work (e.g., `bugfix/crk-5678-export-null-check`)
 3. Add a cross-reference in the new plan's `## Related Tasks` section
 
@@ -128,6 +126,6 @@ If you have suggestions, share them with the user. Only update `~/.ai-rules/` fi
 3. Update `~/.ai-rules/README.md` to reflect the latest file structure.
 4. Update the file table in `~/.ai-rules/rules.md` if files were added or removed.
 
-Log the reflection in the current `log-NN.md` under a `### Rules Feedback` heading.
+Log the reflection in `log.md` under the current session's summary.
 
 Before suggesting changes, read `~/.ai-rules/CHANGELOG.md` to avoid re-suggesting previously reverted rules.

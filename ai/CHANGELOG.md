@@ -6,6 +6,19 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-09 (merge chat.md + log.md into single log.md)
+
+### Changed
+
+- **`planning-templates.mdc`** — Removed `chat.md` template. Replaced separate `log.md` template with a merged format that interleaves conversation (User/Agent) and execution (Log) in chronological exchanges. Directory structure is now 3 files: `plan.md`, `changelog.md`, `log.md`. Updated file creation order accordingly.
+- **`planning.mdc`** — Removed all `chat.md` references from workflow steps (PLAN, EXECUTE checkpoint, Resuming Work, Related Tasks, Retrospective). Task folder now lists 3 files instead of 4.
+
+### Rationale
+
+Across multiple sessions (CRK-5618 bugfix, CRK-5618 SEO CI), the agent consistently updated `log.md` but forgot `chat.md`. Root cause: maintaining two files with overlapping timelines creates redundant checkpoints. The agent naturally maintains `log.md` (because it tracks actions) but neglects `chat.md` (because its purpose feels separate from "the work"). Merging them into one chronological file with User/Agent/Log exchanges eliminates the problem — there's only one file to update, and conversation context flows naturally alongside execution actions.
+
+---
+
 ## 2026-03-09 (draft PR rule)
 
 ### Added

@@ -124,10 +124,10 @@ What needs to be mocked (APIs, services, modules) and at what level.
 
 ---
 
-## chat.md Template
+## log.md Template
 
 ```markdown
-# {Title} — Conversation Log
+# {Title} — Log
 
 ## Sessions
 
@@ -135,9 +135,14 @@ What needs to be mocked (APIs, services, modules) and at what level.
 |---|------------|--------------|--------------------------------|------------------------------------|
 | 1 | {date}     | {tool name}  | {session-id or transcript ref} | {one-line summary}                 |
 
-## Key Conversations
+---
 
-### Session 1 — {date}
+## Session 1 — {date}
+
+**Agent**: {tool name}
+**Session**: {session ID or reference}
+
+### Exchange 1 — {topic}
 
 **User**
 {The question or instruction the user gave}
@@ -145,85 +150,59 @@ What needs to be mocked (APIs, services, modules) and at what level.
 **Agent**
 {The agent's response — key analysis, recommendations, decisions}
 
+**Log**
+1. {Action taken — e.g., Read file X, Created file Y, Updated Z}
+2. {Next action}
+3. ...
+
+### Exchange 2 — {topic}
+
 **User**
 {Follow-up, confirmation, or course correction}
 
 **Agent**
 {Response, updated approach}
-```
 
-### Guidelines
+**Log**
+1. {Action taken}
+2. ...
 
-- **Sessions table**: Quick reference for all sessions. Include enough to find and resume any session.
-  - Cursor: reference agent transcript ID from `~/.cursor/projects/.../agent-transcripts/`
-  - Claude Code: session name (use `claude --resume {name}`)
-  - Other tools: whatever identifier allows resuming
-- **Key Conversations**: Capture the exchanges that contain decisions, requirements, trade-offs, and reasoning. Skip routine tool invocations and file reads.
-- A future reader (teammate or agent) should be able to understand from chat.md: what was discussed, what decisions were made, and why.
-- Don't log full transcripts — that's what the tools store natively. Log the conversations that matter.
+### Session Summary
 
----
-
-## log.md Template
-
-```markdown
-# {Title} — Execution Log
-
-## Iteration 1 — {date}
-
-**Agent**: {tool name}
-**Session**: {session ID or reference}
-
-### Actions
-
-1. {Action taken — e.g., Read file X, Created file Y, Updated Z}
-2. {Next action}
-3. ...
-
-### Decisions
-
-- {Decision made and why}
-
-### Discoveries
-
-- {Unexpected behavior, edge cases found}
-
-### Issues
-
-- {Errors encountered and resolution}
-
-### Deviations
-
-- {Changes from original plan and why}
-
-### Rules Feedback
-
-- {Any missing rules, wrong rules, new patterns discovered}
+**Decisions**: {Key decisions made and why}
+**Discoveries**: {Unexpected behavior, edge cases found}
+**Issues**: {Errors encountered and resolution}
 
 ---
 
-## Iteration 2 — {date}
+## Session 2 — {date}
 
 ...
 ```
 
 ### Guidelines
 
-- One `log.md` per task. Append a new `## Iteration N` section for each work session.
+- One `log.md` per task. Append a new `## Session N` section for each work session.
 - Create `log.md` at the START of the first session. Update it incrementally as you work — don't wait until the end.
+- Each exchange is a self-contained unit: what the user asked → what the agent decided → what the agent did. This keeps conversation and execution in natural chronological order.
 
-### What goes in the log
+### Sessions table
 
-- **All agent actions** — every file read, file written, file edited, command run, research done, API fetched. The `## Actions` section is a numbered sequential list of everything the agent did. This is the primary record of what happened.
-- Key decisions made during implementation (and why)
-- Discoveries — unexpected behavior, edge cases found
-- Errors and mistakes (including agent mistakes) and how they were resolved
-- Deviations from the original plan
+Quick reference for all sessions. Include enough to find and resume any session.
+- Cursor: reference agent transcript ID from `~/.cursor/projects/.../agent-transcripts/`
+- Claude Code: session name (use `claude --resume {name}`)
+- Other tools: whatever identifier allows resuming
+
+### What goes in each exchange
+
+- **User**: The instruction, question, or feedback that triggered the exchange.
+- **Agent**: The response — analysis, decisions, recommendations. Capture reasoning and trade-offs, not just "I did X."
+- **Log**: Numbered list of actions taken (files read/written/edited, commands run). This is the audit trail.
 
 ### What does NOT go in the log
 
 - Verbose terminal output (reference the command, not the full output)
-- Full conversation transcripts (that goes in `chat.md`)
+- Full conversation transcripts — capture the exchanges that contain decisions, requirements, and reasoning. Skip routine acknowledgments.
 - Routine status updates (check off tasks in `plan.md` instead)
 
 ---
@@ -235,7 +214,6 @@ When starting a new task:
 1. Create the folder (after user confirms the name)
 2. Create `plan.md` (draft status)
 3. Create `changelog.md` (v1 entry)
-4. Create `chat.md` (first session entry)
+4. Create `log.md` (first session entry + initial exchange)
 5. Share plan with user → discuss → iterate → update plan.md and changelog.md
 6. Once approved, change status to `in-progress` and begin execution
-7. Create `log.md` at the start of the first work session

@@ -16,8 +16,7 @@ This file contains templates for all task plan files. Referenced by `planning.md
 $AI_AGENT_TASKS_FOLDER/{type}/{name}/
 ├── plan.md          # Current truth — always the latest version
 ├── changelog.md     # How the plan evolved over iterations
-├── chat.md          # Conversation log with key User/Agent exchanges + session IDs
-└── log.md           # Execution log — all agent actions, appended per iteration
+└── log.md           # Combined conversation + execution log
 ```
 
 ### Folder Naming (same as git branches)

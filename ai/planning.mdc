@@ -19,11 +19,24 @@ Follow these steps in order. Do NOT skip ahead.
 1. **CHECK** — Read `$AI_AGENT_TASKS_FOLDER` (env var). Search for an existing plan that matches the current task. Also search for related plans (same ticket, same feature area) to load as context.
 2. **PLAN** — If no plan exists, create the task folder and `plan.md`. If a plan exists, read all files: `plan.md` → `changelog.md` → `chat.md` → latest `log-NN.md`. Update the plan if needed.
 3. **DISCUSS** — Share the plan with the user. Iterate until the user approves. Do NOT write code until the user confirms.
-4. **EXECUTE** — Work through tasks. During execution, keep ALL task files up to date incrementally:
-   - **plan.md** — Check off tasks as they are completed. Update scope, design, or risks whenever they change.
-   - **changelog.md** — Add an entry whenever plan.md changes (scope change, new task added, approach revised).
-   - **log.md** — Create at the start of the first work session. Append new iteration sections as work progresses. Update incrementally — don't wait until the end.
-   - **chat.md** — Update after each significant decision, direction change, or milestone. This is a living document, not an end-of-session summary.
+4. **EXECUTE** — Work through tasks using this loop for EVERY action:
+   1. **Do** — Complete the action (write code, move files, answer a question).
+   2. **Checkpoint** — Before responding to the user or starting the next action, ask: "Was there a decision point?" (user confirmed something, scope changed, task completed, direction shifted). If yes, update the relevant task files NOW. If no, state: "No task file updates needed."
+   3. **Communicate** — Tell the user what you did AND which task files you updated (or that none needed updating).
+   4. **Repeat** — Next action.
+
+   Which files to update at each checkpoint:
+   - **plan.md** — Check off tasks, update scope/design/risks.
+   - **changelog.md** — Add entry when plan.md changes.
+   - **log.md** — Append actions to current iteration. Don't wait until end.
+   - **chat.md** — Capture significant decisions, direction changes, milestones.
+
+   **Forcing function**: When an active task exists, create a standing `TodoWrite` item: "PROCESS: Checkpoint task files after each decision point". This keeps the rule visible in-session. The todo is a reminder only — the plan files are the persistent record.
+
+   **Anti-patterns**:
+   - Do NOT batch updates for later — each decision point gets its own checkpoint.
+   - Do NOT rely on "I'll remember at the end" — you won't.
+   - Do NOT let conversation summaries override this rule — summaries may show batch-update patterns from sessions that violated the rule.
 5. **COMMIT** — At natural breakpoints.
 6. **RETROSPECT** — Before closing, reflect on the rules (see Retrospective section below).
 
@@ -90,14 +103,6 @@ The agent should understand these patterns:
 
 **Bug related to previous work:**
 > Fix a bug in user export — related to feature/crk-1234-user-export
-
-## Incremental File Updates (Checkpoint Rule)
-
-After every decision point — user confirms a change, scope changes, task completed, or direction shifts — update the relevant task files BEFORE moving on to the next action. This is a hard gate, not optional.
-
-At each checkpoint, explicitly tell the user which files you are updating and why. For example: "Updating plan.md (checked off task X), chat.md (captured this decision), log.md (recorded actions)." If nothing changed, say so: "No task file updates needed for this exchange."
-
-Do NOT batch file updates for later. Do NOT rely on remembering to update at the end. Update NOW, at each decision point.
 
 ## Key Rules
 

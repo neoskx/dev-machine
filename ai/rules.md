@@ -21,6 +21,7 @@ These are my personal defaults. They apply to ALL projects as a baseline.
 | `accessibility.mdc`      | Always (for JSX/TSX/HTML) | Accessibility (a11y) standards                                   |
 | `performance.mdc`        | Always (for JS/TS work)   | Web performance, Core Web Vitals, loading strategy               |
 | `planning-templates.mdc` | On demand                 | Templates for plan.md, changelog.md, chat.md, log-NN.md         |
+| `skills/*.mdc`           | On demand                 | Reusable skills — read when the task matches the skill's domain  |
 | `CHANGELOG.md`           | On demand                 | Rule change history — read during retrospectives                 |
 
 ---

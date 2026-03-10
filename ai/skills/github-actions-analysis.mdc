@@ -1,0 +1,127 @@
+---
+description: Skill for analyzing GitHub Actions workflow performance — fetching run data, computing statistics, and generating charts.
+globs:
+alwaysApply: false
+---
+
+# Skill: GitHub Actions Workflow Performance Analysis
+
+Use this skill when the user asks to analyze, debug, or optimize GitHub Actions workflow performance.
+
+## When to Use
+
+- "Why is this workflow slow?"
+- "Show me performance trends for content-deploy"
+- "What's the P90 for this workflow?"
+- "Which job is the bottleneck?"
+
+## Data Collection
+
+### Fetch workflow runs
+
+```bash
+# List recent runs (adjust --limit as needed)
+gh run list --workflow "<workflow-name>.yml" \
+  --repo <owner>/<repo> \
+  --status completed \
+  --limit 200 \
+  --json databaseId,startedAt,updatedAt,conclusion,headBranch \
+  > runs.json
+```
+
+### Fetch job-level timing
+
+```bash
+# For each run, get job-level start/end times
+gh run view <run-id> --repo <owner>/<repo> --json jobs \
+  --jq '.jobs[] | {name, startedAt, completedAt, conclusion}'
+```
+
+Batch this in a loop. Rate limit: ~5000 requests/hour for authenticated `gh` CLI. For 200 runs with ~4 jobs each, expect ~200 API calls (one per run, jobs are included).
+
+### Key fields
+
+- `startedAt` / `completedAt` on each job → job duration
+- `startedAt` on first job, `completedAt` on last job → total workflow duration
+- Job `conclusion`: `success`, `failure`, `skipped`, `cancelled`
+
+## Statistics
+
+Compute per-job and total workflow:
+
+| Metric | Formula |
+|--------|---------|
+| Duration | `completedAt - startedAt` (per job) |
+| Total | `max(completedAt across all jobs) - min(startedAt across all jobs)` |
+| Wait/dead time | `Total - sum of critical path job durations` |
+| Median | 50th percentile |
+| P90 | 90th percentile |
+| Mean | Average |
+
+For parallel jobs (e.g. Build Content runs alongside Upload Resources):
+```
+Critical path = max(parallel_group_1) + max(parallel_group_2) + sequential_jobs
+Wait time = Total - Critical path
+```
+
+## Chart Generation
+
+Use Python with matplotlib. Generate as PNG files the user can view.
+
+### Recommended panels
+
+1. **Daily total duration** — line chart with median per day, secondary y-axis for run count
+2. **Stacked job breakdown** — stacked area or bar showing time per job per day
+3. **Job comparison** — overlaid lines for each job to spot which one degraded
+4. **Wait/dead time** — separate panel since it's usually much smaller
+5. **Correlation** — scatter or dual-axis for external factors (e.g. asset count vs upload time)
+
+### matplotlib patterns
+
+```python
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+fig, axes = plt.subplots(N, 1, figsize=(14, 4*N), sharex=True)
+fig.suptitle('Workflow Performance', y=0.995, fontsize=14)
+
+# Date formatting — weekly ticks to avoid overlap
+ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=0))
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
+
+# Consistent styling
+for ax in axes:
+    ax.grid(True, alpha=0.3)
+    ax.set_ylabel('Minutes')
+
+plt.tight_layout()
+plt.savefig('workflow-analysis.png', dpi=150, bbox_inches='tight')
+```
+
+### Tips
+
+- Use `mdates.WeekdayLocator(byweekday=0)` for weekly x-axis ticks (avoids overlap)
+- Rotate date labels: `rotation=45, ha='right'`
+- Use `fig.suptitle(y=0.995)` to avoid overlap with first subplot title
+- Use secondary y-axis (`ax.twinx()`) for run counts or other scales
+- Use `<details>` collapsible sections when embedding in GitHub step summaries
+
+## Analysis Checklist
+
+1. **Identify the bottleneck job** — which job has the highest P90 and variance?
+2. **Find the inflection point** — when did performance change? Correlate with PRs/deploys around that date
+3. **Check external factors** — asset count growth, dependency changes, runner pool contention
+4. **Separate signal from noise** — filter out failed runs, outliers from runner contention (wait time spikes)
+5. **Quantify the fix** — estimate post-optimization P90 based on which job is the new critical path
+
+## Common Root Causes
+
+| Symptom | Likely cause |
+|---------|-------------|
+| Job duration grew gradually | Input size growth (more files, more tests) |
+| Job duration jumped on a specific date | Code change (new step, removed cache, dependency change) |
+| High variance in one job | External dependency (network, registry, runner pool) |
+| High wait/dead time | Runner pool contention or job dependency bottleneck |
+| Total time grew but no single job changed | New sequential dependency added between jobs |

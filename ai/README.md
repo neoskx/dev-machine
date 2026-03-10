@@ -38,7 +38,9 @@ Read and follow rules from ~/.ai-rules/rules.md and all .mdc files in that direc
 ├── planning-templates.mdc # Templates: plan.md, changelog.md, chat.md, log-NN.md (on demand)
 ├── accessibility.mdc      # Accessibility (a11y) standards (scoped to .jsx/.tsx/.html)
 ├── performance.mdc        # Web performance, Core Web Vitals (scoped to .js/.jsx/.ts/.tsx)
-└── install.sh             # Symlink setup script
+├── install.sh             # Symlink setup script
+└── skills/                # Reusable skills (on demand)
+    └── github-actions-analysis.mdc  # GitHub Actions workflow performance analysis
 ```
 
 ## How It Works
@@ -75,7 +77,7 @@ Most rules are `alwaysApply: true` because they're universal (security, architec
 
 Always-loaded: `rules.md`, `code-quality.mdc`, `testing.mdc`, `security.mdc`, `architecture.mdc`, `git.mdc`, `planning.mdc`
 
-Conditional: `typescript.mdc` (*.ts/*.tsx), `accessibility.mdc` (*.jsx/*.tsx/*.html), `performance.mdc` (*.js/*.jsx/*.ts/*.tsx), `planning-templates.mdc` (on demand)
+Conditional: `typescript.mdc` (*.ts/*.tsx), `accessibility.mdc` (*.jsx/*.tsx/*.html), `performance.mdc` (*.js/*.jsx/*.ts/*.tsx), `planning-templates.mdc` (on demand), `skills/*.mdc` (on demand)
 
 ### Self-Improving Feedback Loop
 

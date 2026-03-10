@@ -6,6 +6,23 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-10 (first skill: GitHub Actions analysis)
+
+### Added
+
+- **`skills/github-actions-analysis.mdc`** — Reusable skill for analyzing GitHub Actions workflow performance. Covers data collection (`gh` CLI commands), statistics (P90, median, wait time), chart generation (matplotlib patterns), analysis checklist, and common root causes.
+
+### Changed
+
+- **`rules.md`** — Added `skills/*.mdc` row to the file table (on demand).
+- **`README.md`** — Added `skills/` directory to file structure. Updated conditional loading budget to include skills.
+
+### Rationale
+
+During the `reduce-content-deploy-time` task, the agent built a workflow performance analysis pipeline (fetching 200 runs, computing per-job stats, generating multi-panel matplotlib charts). The process was generalizable. Converting it to a skill means any future "why is this workflow slow?" question can reuse the same data collection, statistics, and charting patterns without re-deriving them.
+
+---
+
 ## 2026-03-09 (merge chat.md + log.md into single log.md)
 
 ### Changed

@@ -14,6 +14,7 @@ These rules apply to ALL projects. Project-specific git conventions take priorit
 
 If the project has an established commit message style (check `git log`), follow that instead.
 
+- **Verify before every commit.** Before staging and committing, run the project's formatter, linter, and type-checker. Fix all errors before committing — zero errors is the bar (pre-existing warnings are acceptable). Discover the commands from `package.json` `scripts` (look for keys like `format`, `format:fix`, `lint`, `lint:fix`, `type-check`, `typecheck`, `tsc`). If the project has no `package.json` or uses a different build system, check for `Makefile`, `pyproject.toml`, `.pre-commit-config.yaml`, etc. When unsure, ask the user for the right commands.
 - **Conventional commits.** Use the format `type(scope): description` where type is one of: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`, `ci`, `style`, `build`.
 - **One logical change per commit.** Don't mix a feature, a refactor, and a formatting fix in the same commit. Each commit should be independently revertable.
 - **Imperative mood.** Write "add user validation" not "added user validation" or "adds user validation".

@@ -46,7 +46,7 @@ These are my personal defaults. They apply to ALL projects as a baseline.
 ### Phase 3: Task Completion
 
 10. **Ask the user if the task is done.** Don't assume a task is complete. Confirm with the user before closing it out.
-11. **Verify before declaring done.** Run the project's formatter, linter, and type-checker (e.g., `npm run format:fix`, `npm run lint:fix`, `npm run type-check`). Fix any errors before committing — zero lint warnings/errors is the bar. Check the project rules or `package.json` for the exact commands. For date-sensitive operations, verify the current date with `date`.
+11. **Verify before declaring done.** Run the pre-commit verification from `git.mdc` (formatter, linter, type-checker) one final time. Confirm all errors are resolved. For date-sensitive operations, verify the current date with `date`.
 12. **Self-evolution.** Reflect on the rules: were any missing, wrong, redundant, or too strict? Propose specific improvements — rule changes, new skills, workflow refinements. The user decides whether to apply them. When approved, update the rule file(s), `CHANGELOG.md`, and `README.md` per the workflow in `planning.mdc`.
 
 ### Phase 4: Commit

@@ -6,6 +6,19 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-10 (pre-commit verification rule)
+
+### Changed
+
+- **`git.mdc`** — Added "Verify before every commit" as the first rule under Commits. Requires running the project's formatter, linter, and type-checker before every commit (not just at task completion). Includes guidance on discovering commands from `package.json` scripts or other build system configs (`Makefile`, `pyproject.toml`, `.pre-commit-config.yaml`).
+- **`rules.md`** — Simplified Phase 3 rule #11 ("Verify before declaring done") to reference `git.mdc` as the source of truth for pre-commit verification, removing the duplicated command examples.
+
+### Rationale
+
+During CRK-5632, the agent committed code that failed CI lint checks (`import/no-mutable-exports`, import ordering, line-length formatting). The verification rule existed in `rules.md` Phase 3 ("Task Completion") but only applied when closing out a task. Mid-task commits — which happen frequently via rule #6 ("Deliver incrementally") — had no verification step. Moving the rule to `git.mdc` Commits ties it to the commit action itself, ensuring it runs on every commit regardless of task phase. Added `package.json` discovery guidance because different projects use different command names.
+
+---
+
 ## 2026-03-10 (improve GitHub Actions analysis skill)
 
 ### Changed

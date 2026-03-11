@@ -6,6 +6,22 @@ Format: reverse chronological. Each entry includes what changed, why, and what t
 
 ---
 
+## 2026-03-10 (improve GitHub Actions analysis skill)
+
+### Changed
+
+- **`skills/github-actions-analysis.mdc`** — Added three new sections based on first real usage (SSR build workflow analysis):
+  1. **GHE support** — `GH_HOST` env var for GitHub Enterprise instances (hit a 404 without it).
+  2. **Failure analysis** — reliability metrics, per-job failure breakdown, flaky test detection, cancellation context. The SSR workflow had a 30% failure rate which the original skill didn't guide toward investigating.
+  3. **Output format** — structured markdown template for the final summary (timing table, workflow DAG, bottleneck, wait time, reliability, optimization list).
+  Also added two new rows to the Common Root Causes table (high failure rate, high cancellation rate).
+
+### Rationale
+
+First real usage of the skill on `ssr_build_and_deploy.yml` revealed three gaps: GHE routing, failure analysis, and summary structure. The skill guided data collection and charting well but missed reliability as an analysis dimension.
+
+---
+
 ## 2026-03-10 (first skill: GitHub Actions analysis)
 
 ### Added

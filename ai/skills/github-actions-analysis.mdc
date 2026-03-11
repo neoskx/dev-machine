@@ -17,10 +17,20 @@ Use this skill when the user asks to analyze, debug, or optimize GitHub Actions 
 
 ## Data Collection
 
+### GitHub Enterprise (GHE) support
+
+When targeting a GHE instance (not github.com), set `GH_HOST` so `gh` CLI routes to the correct API:
+
+```bash
+export GH_HOST=github.example.com
+# All subsequent gh commands will target this host
+```
+
+Without this, `gh` defaults to `api.github.com` and returns 404.
+
 ### Fetch workflow runs
 
 ```bash
-# List recent runs (adjust --limit as needed)
 gh run list --workflow "<workflow-name>.yml" \
   --repo <owner>/<repo> \
   --status completed \
@@ -37,7 +47,7 @@ gh run view <run-id> --repo <owner>/<repo> --json jobs \
   --jq '.jobs[] | {name, startedAt, completedAt, conclusion}'
 ```
 
-Batch this in a loop. Rate limit: ~5000 requests/hour for authenticated `gh` CLI. For 200 runs with ~4 jobs each, expect ~200 API calls (one per run, jobs are included).
+Batch in a Python loop (10 at a time). Rate limit: ~5000 requests/hour for authenticated `gh` CLI. For 200 runs, expect ~200 API calls (one per run, jobs are included in the response).
 
 ### Key fields
 
@@ -108,13 +118,90 @@ plt.savefig('workflow-analysis.png', dpi=150, bbox_inches='tight')
 - Use secondary y-axis (`ax.twinx()`) for run counts or other scales
 - Use `<details>` collapsible sections when embedding in GitHub step summaries
 
+## Failure Analysis
+
+Always compute reliability metrics — a 30% failure rate wastes more runner time than a slow job.
+
+### Metrics to compute
+
+```python
+total = len(all_runs)
+success = sum(1 for r in all_runs if r['conclusion'] == 'success')
+failure = sum(1 for r in all_runs if r['conclusion'] == 'failure')
+cancelled = sum(1 for r in all_runs if r['conclusion'] == 'cancelled')
+```
+
+### Per-job failure breakdown
+
+For failed runs, fetch job-level data and identify which job fails most:
+
+```python
+# Count failures by job name
+from collections import Counter
+fail_jobs = Counter()
+for run in failed_runs:
+    for job in run_jobs[run['databaseId']]:
+        if job['conclusion'] == 'failure':
+            fail_jobs[job['name']] += 1
+```
+
+### Flaky test detection
+
+If E2E or test jobs have high failure rates but the same commits succeed on retry:
+
+```python
+# Group by head SHA, check if same SHA has both success and failure
+from collections import defaultdict
+by_sha = defaultdict(set)
+for r in all_runs:
+    by_sha[r['headSha']].add(r['conclusion'])
+flaky = sum(1 for conclusions in by_sha.values() if 'success' in conclusions and 'failure' in conclusions)
+```
+
+### Cancellation context
+
+High cancellation rates are often benign — `cancel-in-progress: true` on PR branches cancels stale runs on re-push. Separate PR cancellations from master cancellations.
+
 ## Analysis Checklist
 
-1. **Identify the bottleneck job** — which job has the highest P90 and variance?
-2. **Find the inflection point** — when did performance change? Correlate with PRs/deploys around that date
-3. **Check external factors** — asset count growth, dependency changes, runner pool contention
-4. **Separate signal from noise** — filter out failed runs, outliers from runner contention (wait time spikes)
-5. **Quantify the fix** — estimate post-optimization P90 based on which job is the new critical path
+1. **Compute reliability** — success/failure/cancellation rates. Flag if failure rate > 15%.
+2. **Identify the bottleneck job** — which job has the highest P90 and variance?
+3. **Analyze failure patterns** — which jobs fail most? Are failures flaky (same SHA succeeds on retry)?
+4. **Find the inflection point** — when did performance change? Correlate with PRs/deploys around that date.
+5. **Check external factors** — asset count growth, dependency changes, runner pool contention.
+6. **Separate signal from noise** — filter out failed runs, outliers from runner contention (wait time spikes).
+7. **Quantify the fix** — estimate post-optimization P90 based on which job becomes the new critical path.
+
+## Output Format
+
+Present findings in a structured summary:
+
+```markdown
+## <Workflow Name> — Performance Analysis
+
+**Data**: N runs (date range) | X success, Y failure (Z%), W cancelled
+
+### Overall Timing
+| Flow | Median | P90 | Mean |
+|------|--------|-----|------|
+| ... | ... | ... | ... |
+
+### Workflow Structure
+Show the job DAG with mean durations, highlighting parallel vs sequential paths.
+
+### Bottleneck
+Name the bottleneck job, its % of critical path, and variance (CoV).
+
+### Wait/Queue Time
+| Flow | Median | P90 | % of Total |
+|------|--------|-----|------------|
+
+### Reliability
+Success/failure/cancellation rates. Top failing jobs.
+
+### Optimization Opportunities (by ROI)
+Numbered list, highest impact first.
+```
 
 ## Common Root Causes
 
@@ -125,3 +212,5 @@ plt.savefig('workflow-analysis.png', dpi=150, bbox_inches='tight')
 | High variance in one job | External dependency (network, registry, runner pool) |
 | High wait/dead time | Runner pool contention or job dependency bottleneck |
 | Total time grew but no single job changed | New sequential dependency added between jobs |
+| High failure rate on one job | Flaky tests, transient infra issue, or resource exhaustion |
+| High cancellation rate (non-master) | Expected from `cancel-in-progress: true` on PR branches |
